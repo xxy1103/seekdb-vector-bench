@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+
+# Local seekdb embedded data & temporary DB files
+seekdb_data*/
+*.db
+.seekdb_tmp*/
+
+# OS / IDE
+.DS_Store
+.vscode/
+.idea/
