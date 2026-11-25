@@ -190,10 +190,11 @@ def benchmark_scan_tiers(
     n_scalar_subset: int = 300,
 ) -> dict:
     """
-    Separate Python interpreter loop overhead from contiguous BLAS/SIMD matrix throughput:
-    1. Pure Python nested loop
+    Separate Python interpreter loop overhead from contiguous BLAS/SIMD matrix-vector throughput
+    (all three tiers compute the exact same 384-D inner product):
+    1. Pure Python scalar inner-product loop
     2. Row-by-row unbatched NumPy dot loop
-    3. Contiguous matrix-vector BLAS/NEON batch (corpus @ q)
+    3. Contiguous matrix-vector BLAS/NEON SGEMV (corpus @ q)
     """
     q = queries[0]
     sub = corpus[:n_scalar_subset].tolist()
@@ -203,8 +204,7 @@ def benchmark_scan_tiers(
     for row in sub:
         s = 0.0
         for a, b in zip(row, q_list):
-            d = a - b
-            s += d * d
+            s += a * b
     py_ms_per_1k = (time.perf_counter() - t0) * 1000.0 * (1000.0 / n_scalar_subset)
 
     t1 = time.perf_counter()

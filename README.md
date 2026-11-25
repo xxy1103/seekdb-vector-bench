@@ -77,7 +77,7 @@ uv pip install --python .venv/bin/python -e ".[dev]"
 ### 4.1 Exp 1: Distance Concentration & Unit-Norm Equivalence
 - At $d = 2$, $D_{\min}/D_{\max} = 0.0114$ and `InstrumentedKDTree` visits **`1.51%`** of `128` leaves. By **$d = 16$**, KD-Tree exact search visits **`100.0%`** (`128/128`) leaves ($D_{\min}/D_{\max} = 0.3134$); by **$d = 1536$**, $D_{\min}/D_{\max}$ rises to **`0.8987`** (relative contrast drops from `156.0135` to `0.1128`).
 - On unnormalized vectors, `L2` vs `Inner Product` Top-10 overlap is **`0.0%`** (full-list Kendall-$\tau = -0.4178$) and `L2` vs `Cosine` is **`21.17%`** white-box (**`33.67%`** in live `seekdb` SQL). After L2 unit normalization ($\|x\|_2 = 1$), white-box overlap hits **`100.0%`** ($\tau = 1.0000$) and live `seekdb` achieves exact Top-10 sequence matches across **`29/30`** SQL queries.
-- 3-Tier scan latency per 1,000 384-D vectors: Python scalar loop **`12.748 ms`** $\to$ row-wise NumPy **`0.501 ms`** (`25.5x`, interpreter removal) $\to$ BLAS `SGEMM` **`0.0106 ms`** (**`47.4x`** over row-wise NumPy, **`1206.1x`** over Python).
+- 3-Tier inner-product scan latency per 1,000 384-D vectors: Python scalar loop **`9.767 ms`** $\to$ row-wise NumPy **`0.636 ms`** (`15.4x`, interpreter removal) $\to$ contiguous BLAS `SGEMV` (`corpus @ q`, or `SGEMM` for batched queries) **`0.0120 ms`** (**`53.0x`** over row-wise NumPy, **`814.9x`** over Python).
 
 ![Curse of Dimensionality & Metric Equivalence](docs/figures/b_fig2_curse_and_metrics.svg)
 
@@ -90,37 +90,38 @@ uv pip install --python .venv/bin/python -e ".[dev]"
 | White-box `RaBitQ 1-bit + Refine(k=60)` | **56.0** (27.43x) | +1536.0 | 2060.0 | 0.8283 | — | — | — |
 | White-box `IVF-PQ (m=24, K=256, Refine 5x)` | **28.0** (54.86x) | +1536.0 | 611.2 | 0.9908 | — | — | — |
 | White-box `HNSW (M=16, ef=64 / 128)` | 1672.0 | 0 | 209.2 / 316.6 | 0.9692 / 0.9917 | — | — | — |
-| **Live `seekdb` `Exact (No APPROXIMATE)`** | — | — | — | **1.0000** | 1.326 | 3.198 | 754.1 |
-| **Live `seekdb` `HNSW (VSAG FP32)`** | — | — | — | 0.9483 | 0.811 | 2.010 | 1232.4 |
-| **Live `seekdb` `HNSW_SQ (VSAG Int8)`** | — | — | — | 0.9083 | **0.669** | **1.106** | **1493.9** |
-| **Live `seekdb` `HNSW_BQ (refine_k=4)`** | — | — | — | 0.9083 | 0.783 | 1.516 | 1277.6 |
-| **Live `seekdb` `IVF_FLAT (OB nlist=16)`** | — | — | — | 1.0000 | 1.497 | 3.797 | 668.0 |
-| **Live `seekdb` `IVF_PQ (OB nlist=16, m=24)`** | — | — | — | 1.0000 | 1.027 | 2.105 | 973.9 |
+| **Live `seekdb` `Exact (No APPROXIMATE)`** | — | — | — | **1.0000** | 1.062 | 1.099 | 941.3 |
+| **Live `seekdb` `HNSW (VSAG FP32)`** | — | — | — | 0.9483 | 0.623 | 0.678 | 1604.4 |
+| **Live `seekdb` `HNSW_SQ (VSAG Int8)`** | — | — | — | 0.9083 | **0.622** | **0.673** | **1606.6** |
+| **Live `seekdb` `HNSW_BQ (refine_k=4)`** | — | — | — | 0.9083 | 0.678 | 0.739 | 1473.9 |
+| **Live `seekdb` `IVF_FLAT (OB nlist=16)`** | — | — | — | 1.0000 | 0.981 | 1.046 | 1019.1 |
+| **Live `seekdb` `IVF_PQ (OB nlist=16, m=24)`** | — | — | — | 1.0000 | 0.872 | 0.916 | 1146.5 |
 
 RaBitQ empirical verification confirms near-zero bias (`mean_signed_bias` within $\pm 0.17\%$ across $d \in [64, 512]$) and $O(1/\sqrt{d})$ error scaling (`7.70%` at $d=64$ $\to$ `5.45%` at $128$ $\to$ `3.84%` at $256$ $\to$ `2.76%` at $512$).
 
-![VSAG & RaBitQ Architecture](docs/figures/b_fig3_vsag_index_and_rabitq_arch.svg)
+![Index Footprint & RaBitQ Error Scaling](docs/figures/b_fig3_vsag_index_and_rabitq_arch.svg)
 ![ANN & Quantization Pareto](docs/figures/b_fig4_ann_quantization_pareto.svg)
 
 ### 4.3 Exp 3: Filtered ANN Selectivity Collapse & `seekdb` B+Tree CBO Behavior
-- Across all **8 selectivity levels** ($\sigma \in \{0.5\%, 1\%, 2\%, 5\%, 10\%, 20\%, 50\%, 100\%\}$), `Strict 1-Hop` collapses at low $\sigma$ (`5.00%` Recall@10 at $\sigma=1\%$) and `Pre-Filter` maintains `100.0%` recall (`0.007–0.433 ms` on $N=2,000$).
+- Across all **8 selectivity levels** ($\sigma \in \{0.5\%, 1\%, 2\%, 5\%, 10\%, 20\%, 50\%, 100\%\}$), `Strict 1-Hop` collapses at low $\sigma$ (`5.00%` Recall@10 at $\sigma=1\%$) and `Pre-Filter` maintains `100.0%` recall (`0.007–0.422 ms` on $N=2,000$).
 - Predicate-agnostic `ACORN-gamma` cuts distance evaluations to `144.6–153.5` (vs `347.9` for `Standard In-Filter`) while retaining `14.67%` ($\sigma=1\%$), `46.00%` ($\sigma=5\%$), and `62.67%` ($\sigma=10\%$) recall. Because neighbor-diversity RNG pruning is skipped when `gamma > 1`, `ACORN-gamma` reaches `89.33%` at $\sigma=100\%$.
 - Live `seekdb` `EXPLAIN` on `product_catalog` ($N=2,000$) verifies `VECTOR INDEX ADAPTIVE SCAN (PRE-FILTER)` across 3%, 28%, and 80% selectivities (`EST.ROWS = 286/286/1000` without B+Tree; `76/586/1628` with composite `idx_cat_stock_price`, triggering `filter_before_indexback[true]` for 3% and 28%).
 
 ![Filtered ANN Collapse & ACORN](docs/figures/b_fig5_filtered_ann_collapse_acorn.svg)
 
 ### 4.4 Exp 4: Multimodal Hybrid Search & `knn.filter` Leak Prevention
-- Evaluated strictly with real `384-D all-MiniLM-L6-v2` embeddings and `Okapi BM25`: `Dense-Only` leads `semantic` queries (`80.12%` Recall@10, MRR `82.50%`), whereas `BM25` dominates `exact_sku` (`100.0%` vs Dense `10.00%`).
-- `Linear-MinMax (alpha=0.5)` reaches **`92.42%`** overall Recall@10 (**`92.71%`** MRR@10), outperforming unweighted `RRF (k=60)` (`79.25%` Recall@10, `58.93%` MRR) and live `seekdb DBMS_HYBRID_SEARCH` (`80.64%` Recall@10, `60.79%` MRR) because unweighted $1/(60+r)$ dilutes exact SKU rank-1 hits when the dense branch assigns rank-1 scores to non-matching neighbors.
+- Evaluated strictly with real `384-D all-MiniLM-L6-v2` embeddings and `Okapi BM25` against relevance ground truth: `Dense-Only` leads `semantic` queries (`80.12%` Recall@10, MRR `82.50%`), whereas `BM25` dominates `exact_sku` (`100.0%` vs Dense `10.00%`).
+- `Linear-MinMax (alpha=0.5)` reaches **`92.42%`** overall Recall@10 (**`92.71%`** MRR@10), outperforming unweighted `RRF (k=60)` (`79.25%` Recall@10, `58.93%` MRR) and live `seekdb DBMS_HYBRID_SEARCH` (`79.97%` Recall@10, `60.85%` MRR). In white-box `RRF (k=60)`, unremoved English stopwords (`"and"`, `"for"`) in `exact_sku` queries accumulate across BM25 and Dense (`2/(60+r)` beats single-branch `1/61`), dropping `exact_sku` recall to `65.00%`, whereas `seekdb` `FULLTEXT` filters stopwords (`94.17%`) while splitting hyphenated SKUs (`75.00%` on `compound`).
 - Live `seekdb DBMS_HYBRID_SEARCH.GET_SQL` filter check: omitting `knn.filter` leaked **`1`** violating row (`id=1042, category='running_shoes', price=1457.14 >= 950`); enforcing unified `query.filter` + `knn.filter` eliminated leaks (`0`).
 
 ![seekdb Hybrid Search RRF](docs/figures/b_fig6_seekdb_hybrid_search_rrf.svg)
 
 ### 4.5 Exp 5: Concurrency QPS–P99 Knee & Verified Mixed R/W Governance
-- **Live `seekdb` multi-threaded concurrency (`1t..16t`, `150` q/thread after per-connection warmup, 3-trial median)**: scales from `1361.9 QPS` (`P99=1.418 ms` at `1t`) to a low-latency knee of **`5775.2 QPS`** (`P99=1.136 ms` at `4t`), peaking at `6717.3 QPS` (`12t`, `P99=8.680 ms`) before queueing drives P99 to **`20.102 ms`** (`max 123.617 ms` at `16t`).
-- **Live `seekdb` verified mixed R/W (`4` readers + `40x10` writes, `100%` 10/10 row-count assertion, `pre/post Recall@10 = 96.67% / 80.00%` matching on both tables)** & `oceanbase/seekdb@61670cd` internals:
-  - `ORGANIZATION = HEAP` (`SYNC_MODE=ASYNC`) runs faster already in 4-thread pure-read baseline (`0.211 ms` / `P99=0.746 ms` via `rowset=16` vs IOT `0.777 ms` / `P99=2.390 ms` via `rowset=256`), and during concurrent writes maintains **`0.238 ms`** read avg (vs IOT `1.003 ms`), **`0.984 ms`** read P99 (vs `5.626 ms`), **`0.855 ms`** write avg (`6.9x` faster than IOT `5.913 ms`), and completes **`8,781`** reads (`3.0x` vs `2,892`).
-- **White-box lossless Delta+Snapshot mechanism simulation (`800 -> 860` nodes using real `insert_node()`)**: lowers read P99 from **`8.580 ms`** (`max 59.426 ms`) under in-place RW mutex locking to **`1.828 ms`** (`max 2.946 ms`).
+- **Live `seekdb` multi-threaded concurrency (`1t..16t`, `150` q/thread after per-connection warmup, 3-trial median, `autocommit=True`)**: scales smoothly from `1645.5 QPS` (`P99=0.663 ms` at `1t`) through the low-tail knee at `8t` (**`6836.0 QPS`**, `P99=3.063 ms`), reaching **`7699.3 QPS`** at `16t` as P99 queueing latency rises to **`11.978 ms`** (`max 78.746 ms`).
+- **Live `seekdb` verified mixed R/W (`4` readers + `40x10` writes, `autocommit=True`, verified `persisted_row_count=1,900` & `short_read_count=0`)** & `oceanbase/seekdb@61670cd` internals:
+  - `ORGANIZATION = HEAP` (`SYNC_MODE=ASYNC`) runs faster already in 4-thread pure-read baseline (`0.164 ms` / `P99=0.222 ms` via `rowset=16` vs IOT `0.533 ms` / `P99=0.815 ms` via `rowset=256`).
+  - During concurrent writes, `ASYNC` heap mode achieves **`0.812 ms`** write avg (`3.2x` faster than IOT `2.603 ms`), maintains **`0.177 ms`** read avg / **`0.561 ms`** read P99 (vs IOT `0.600 ms` / `0.990 ms`), completes **`11,532`** reads (`2.9x` vs `3,953`), and achieves **`99.33%` unrefreshed Recall@10** (vs `96.00%` on IOT) via immediate exact-delta scan merged with `snap_data_`.
+- **White-box lossless Delta+Snapshot mechanism simulation (`800 -> 860` nodes using real `insert_node()`)**: lowers read P99 from **`7.152 ms`** (`max 35.168 ms`) under in-place RW mutex locking to **`1.841 ms`** (`max 2.249 ms`).
 
 ![Recall-QPS-P99 Triangle](docs/figures/b_fig7_recall_qps_p99_triangle.svg)
 ![Delta Snapshot P99 Governance](docs/figures/b_fig8_delta_snapshot_p99_governance.svg)

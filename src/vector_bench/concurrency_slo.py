@@ -113,7 +113,7 @@ def run_seekdb_concurrency_benchmark(
                 barrier = threading.Barrier(n_threads)
 
                 def _worker(tid: int) -> list[float]:
-                    cn = pylibseekdb.connect(database="test")
+                    cn = pylibseekdb.connect(database="test", autocommit=True)
                     cr = cn.cursor()
                     # Per-connection warmup before timed barrier
                     for w_idx in range(3):
@@ -213,7 +213,7 @@ def run_seekdb_concurrency_benchmark(
             barrier_pr = threading.Barrier(4)
 
             def _pure_reader(tid: int) -> list[float]:
-                cn = pylibseekdb.connect(database="test")
+                cn = pylibseekdb.connect(database="test", autocommit=True)
                 cr = cn.cursor()
                 for w_i in range(3):
                     cr.execute(f"SELECT id, l2_distance(vec, '{q_strs[(tid + w_i) % len(q_strs)]}') AS d FROM {tname} ORDER BY d APPROXIMATE LIMIT 10")
@@ -247,7 +247,7 @@ def run_seekdb_concurrency_benchmark(
             def _reader(tid: int):
                 nonlocal short_reads, min_rows_seen
                 try:
-                    cn = pylibseekdb.connect(database="test")
+                    cn = pylibseekdb.connect(database="test", autocommit=True)
                     cr = cn.cursor()
                     for w_i in range(3):
                         cr.execute(f"SELECT id, l2_distance(vec, '{q_strs[(tid + w_i) % len(q_strs)]}') AS d FROM {tname} ORDER BY d APPROXIMATE LIMIT 10")
@@ -279,7 +279,7 @@ def run_seekdb_concurrency_benchmark(
 
             def _writer():
                 try:
-                    cn = pylibseekdb.connect(database="test")
+                    cn = pylibseekdb.connect(database="test", autocommit=True)
                     cr = cn.cursor()
                     for b_start in range(0, len(insert_vecs), 10):
                         b_end = min(b_start + 10, len(insert_vecs))
@@ -307,16 +307,25 @@ def run_seekdb_concurrency_benchmark(
             assert short_reads == 0, f"{tname} had {short_reads} short reads (<10 rows) during mixed R/W"
             assert not rw_errs, f"{tname} mixed R/W errors: {rw_errs}"
 
-            post_recall, post_min = _measure_live_recall(tname, gt_post)
+            cur.execute(f"SELECT COUNT(*) FROM {tname}")
+            persisted_rows = int(cur.fetchone()[0])
+            assert persisted_rows == base_n + write_n, f"{tname} persisted {persisted_rows} != {base_n + write_n}"
+
+            post_recall_unrefreshed, post_min = _measure_live_recall(tname, gt_post)
             assert post_min == 10, f"{tname} post-write returned {post_min} rows < 10"
+
+            cur.execute("CALL DBMS_INDEX_MANAGER.REFRESH()")
+            post_recall_refreshed, _ = _measure_live_recall(tname, gt_post)
 
             r_arr = np.array(read_lats, dtype=np.float64)
             w_arr = np.array(write_lats, dtype=np.float64)
             out["mixed_rw_live"][mode_key] = {
+                "persisted_row_count": persisted_rows,
                 "pure_read_4t_avg_ms": round(float(np.mean(pr_arr)), 3),
                 "pure_read_4t_p99_ms": round(float(np.percentile(pr_arr, 99)), 3),
                 "pre_write_recall_at_10": pre_recall,
-                "post_write_recall_at_10_unrefreshed": post_recall,
+                "post_write_recall_at_10_unrefreshed": post_recall_unrefreshed,
+                "post_write_recall_at_10_refreshed": post_recall_refreshed,
                 "short_read_count": int(short_reads),
                 "min_rows_returned": int(min_rows_seen),
                 "read_count": int(len(read_lats)),

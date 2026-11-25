@@ -154,7 +154,7 @@ def draw_arrow(ax: plt.Axes, x1: float, y1: float, x2: float, y2: float, color: 
 # ---------------------------------------------------------------------------
 # b_fig1: seekdb 向量与多模检索引擎五层架构
 # ---------------------------------------------------------------------------
-def gen_b_fig1() -> None:
+def gen_b_fig1(metrics: dict[str, Any]) -> None:
     fig, ax = plt.subplots(figsize=(14.5, 7.2))
     ax.set_xlim(0, 1)
     ax.set_ylim(0, 1)
@@ -224,14 +224,15 @@ def gen_b_fig1() -> None:
         "L4 增量–快照双层存储与治理模型（ObVectorIndexInfo）",
         "内存层：snap_data_（冻结基线大图）+ incr_data_（增量小图） |  内部辅助表：__idx_<tid>_<name>（Delta 增量表）、\n"
         "_index_id_table（rowkey <-> vid 映射）、vbitmap_table（软删位图）、_index_snapshot_data_table\n"
-        "堆表 HNSW 默认启用 ASYNC 异步刷新（Change Stream 追平）；显式 SYNC_MODE=IMMEDIATE 可切回同步",
+        "堆表 HNSW 默认启用 ASYNC 异步刷新（后台异步刷新线程合入新快照）；显式 SYNC_MODE=IMMEDIATE 可切回同步",
         fc=C_LIGHT_AMBER, ec=C_AMBER,
     )
 
+    st_x = metrics["exp1"]["scan_tiers"]["blas_vs_python_x"]
     draw_box(
         ax, 0.04, 0.04, 0.92, 0.115,
         "L5 硬件加速与向量化执行层",
-        "AVX2 / AVX-512 / ARM NEON SIMD   |   BLAS 批矩阵 SGEMM（较 Python 循环快 1206x）   |   __builtin_prefetch 与 Popcount",
+        f"AVX2 / AVX-512 / ARM NEON SIMD   |   BLAS 矩阵向量乘 SGEMV（较 Python 循环快 {st_x:.0f}x）   |   __builtin_prefetch 与 Popcount",
         fc=C_LIGHT_SLATE, ec=C_SLATE,
     )
 
@@ -317,24 +318,24 @@ def gen_b_fig2(metrics: dict[str, Any], exp1_rows: list[dict[str, str]]) -> None
         ax.text(bar.get_x() + bar.get_width() / 2, v + 2.2, f"{v:.0f}%", ha="center", va="bottom", fontsize=8.3, color=C_TEAL, fontweight="bold")
     ax.text(
         0.5,
-        0.84,
+        0.79,
         f"全量 Kendall tau: -0.418 -> +1.000\nseekdb Top-10 逐位一致: {sql_meq['unit_exact_match_queries']}/{sql_meq['n_queries']} 次查询",
         transform=ax.transAxes,
         ha="center",
-        fontsize=8.1,
-        bbox=dict(boxstyle="round,pad=0.3", fc="#F0FDFA", ec=C_TEAL, lw=0.8),
+        fontsize=8.0,
+        bbox=dict(boxstyle="round,pad=0.28", fc="#F0FDFA", ec=C_TEAL, lw=0.8),
     )
     ax.set_xticks(xb)
     ax.set_xticklabels(cats, fontsize=8.5)
     ax.set_ylabel("Top-10 重合率 (%)")
-    ax.set_ylim(0, 134)
+    ax.set_ylim(0, 148)
     ax.grid(True, axis="y", alpha=0.6)
     ax.set_title("B. L2 / IP / Cosine 单位归一化等价性", fontweight="bold", pad=10)
-    ax.legend(loc="upper left", fontsize=8.0, framealpha=0.95)
+    ax.legend(loc="upper center", ncol=2, fontsize=8.0, framealpha=0.95)
 
     ax = axes[2]
     st = metrics["exp1"]["scan_tiers"]
-    tiers = ["Python 标量\n双层循环", "NumPy 逐行\n点积调用", "BLAS 批矩阵\nSGEMM (SIMD)"]
+    tiers = ["Python 标量\n内积循环", "NumPy 逐行\n点积调用", "BLAS 矩阵向量乘\nSGEMV (SIMD)"]
     latencies = [
         st["python_loop_ms_per_1k"],
         st["numpy_row_dot_ms_per_1k"],
@@ -532,12 +533,12 @@ def gen_b_fig4(metrics: dict[str, Any]) -> None:
 
     ax = axes[2]
     live_pts = [
-        ("Exact\n(全表精算)", exact_info["exact_qps"], exact_info["exact_ann_recall_at_10"] * 100.0, C_SLATE, "s", (-10, -28)),
-        ("HNSW\n(FP32)", live[0]["single_thread_qps"], live[0]["ann_recall_at_10"] * 100.0, C_BLUE, "o", (-68, 8)),
-        ("HNSW_SQ\n(Int8)", live[1]["single_thread_qps"], live[1]["ann_recall_at_10"] * 100.0, C_TEAL, "o", (-28, 12)),
+        ("Exact\n(全表精算)", exact_info["exact_qps"], exact_info["exact_ann_recall_at_10"] * 100.0, C_SLATE, "s", (-40, -28)),
+        ("HNSW\n(FP32)", live[0]["single_thread_qps"], live[0]["ann_recall_at_10"] * 100.0, C_BLUE, "o", (-72, 8)),
+        ("HNSW_SQ\n(Int8)", live[1]["single_thread_qps"], live[1]["ann_recall_at_10"] * 100.0, C_TEAL, "o", (-24, 14)),
         ("HNSW_BQ\n(refine_k=4)", live[2]["single_thread_qps"], live[2]["ann_recall_at_10"] * 100.0, C_PURPLE, "^", (-118, 0)),
-        ("IVF_FLAT", live[3]["single_thread_qps"], live[3]["ann_recall_at_10"] * 100.0, C_AMBER, "D", (-30, 10)),
-        ("IVF_PQ\n(m=24)", live[4]["single_thread_qps"], live[4]["ann_recall_at_10"] * 100.0, C_RED, "D", (10, -14)),
+        ("IVF_FLAT", live[3]["single_thread_qps"], live[3]["ann_recall_at_10"] * 100.0, C_AMBER, "D", (-10, 10)),
+        ("IVF_PQ\n(m=24)", live[4]["single_thread_qps"], live[4]["ann_recall_at_10"] * 100.0, C_RED, "D", (12, -16)),
     ]
     for lbl, qps, rec, col, mk, offset in live_pts:
         ax.scatter(qps, rec, color=col, marker=mk, s=78, zorder=4)
@@ -562,7 +563,7 @@ def gen_b_fig4(metrics: dict[str, Any]) -> None:
     )
     ax.set_xlabel("单线程 QPS (seekdb v1.4.1.0, N=2000, D=384)")
     ax.set_ylabel("ANN Recall@10 (%)")
-    ax.set_xlim(480, 1680)
+    ax.set_xlim(760, 1750)
     ax.set_ylim(87.0, 102.5)
     ax.grid(True, alpha=0.6)
     ax.set_title("C. Live seekdb 五类索引实测对比", fontweight="bold", pad=10)
@@ -622,24 +623,25 @@ def gen_b_fig5(exp3_rows: list[dict[str, str]]) -> None:
     ax1.set_xticks(xb)
     ax1.set_xticklabels(["sigma = 1% (20 行)", "sigma = 10% (200 行)", "sigma = 50% (1000 行)"], fontsize=8.8)
     ax1.set_ylabel("平均向量距离评估次数")
-    ax1.set_ylim(0, 1280)
+    ax1.set_ylim(0, 1420)
     ax1.grid(True, axis="y", alpha=0.6)
     ax1.set_title("B. 候选计算量与 seekdb CBO 自适应计划", fontweight="bold", pad=10)
     ax1.legend(loc="upper left", fontsize=8.0, framealpha=0.95)
 
     ax1.text(
-        0.5,
-        0.72,
+        0.35,
+        0.68,
         "seekdb CBO EXPLAIN (product_catalog, N=2000):\n"
-        "- 无二级索引：3% 与 28% 均估算 EST=286，80% 为 1000，统一 PRE-FILTER\n"
-        "- 建 idx_cat_stock_price：3% (EST=76) 与 28% (586) 启用 filter_before_indexback[true]\n"
-        "- 80% 选择率下 CBO 主动放弃二级索引回表；小规模下 Pre-Filter 延迟 < 0.25 ms",
+        "- 无二级索引：3% 与 28% 均估算 EST=286，80% 为 1000\n"
+        "- 建 idx_cat_stock_price：3%(76) 与 28%(586)\n"
+        "  触发 filter_before_indexback[true]\n"
+        "- 80% 放弃二级回表；小规模 Pre-Filter < 0.35 ms",
         transform=ax1.transAxes,
         ha="center",
         va="center",
-        fontsize=7.8,
+        fontsize=7.6,
         color=C_DARK,
-        bbox=dict(boxstyle="round,pad=0.32", fc="#F8FAFC", ec=C_SLATE, lw=0.9),
+        bbox=dict(boxstyle="round,pad=0.30", fc="#F8FAFC", ec=C_SLATE, lw=0.9),
     )
 
     save_fig(fig, "b_fig5_filtered_ann_collapse_acorn")
@@ -791,25 +793,25 @@ def gen_b_fig7(ef_rows: list[dict[str, str]], conc_rows: list[dict[str, str]]) -
     ax1_r = ax1.twinx()
     l4, = ax1_r.plot(thds, p99, "D--", color=C_RED, lw=2.1, ms=6.2, label="P99 尾延迟 (ms)")
     ax1_r.set_ylabel("P99 延迟 (ms)", color=C_RED)
-    ax1_r.set_ylim(-1.2, max(p99) * 1.26)
+    ax1_r.set_ylim(-1.2, max(p99) * 1.32)
 
-    # Annotate 4t low-P99 knee & 16t saturation cleanly
-    idx_4t = thds.index(4)
+    idx_knee = thds.index(8)
     idx_last = len(thds) - 1
     ax1.annotate(
-        f"高性价比拐点 @ {thds[idx_4t]}t：\n{qps[idx_4t]:.0f} QPS, P99={p99[idx_4t]:.2f}ms",
-        xy=(thds[idx_4t], qps[idx_4t]),
-        xytext=(thds[idx_4t] + 0.8, max(qps) * 1.07),
+        f"高并发甜点区 @ {thds[idx_knee]}t：\n{qps[idx_knee]:.0f} QPS, P99={p99[idx_knee]:.2f}ms",
+        xy=(thds[idx_knee], qps[idx_knee]),
+        xytext=(thds[idx_knee] + 0.4, qps[idx_knee] - 1750),
+        ha="center",
         arrowprops=dict(arrowstyle="->", color=C_BLUE, lw=1.1),
         fontsize=8.0,
         fontweight="bold",
         color=C_BLUE,
     )
     ax1_r.annotate(
-        f"过载排队区 @ {thds[idx_last]}t：\nP99={p99[idx_last]:.1f}ms ({qps[idx_last]:.0f} QPS)",
+        f"排队爬坡 @ {thds[idx_last]}t：\nP99={p99[idx_last]:.2f}ms ({qps[idx_last]:.0f} QPS)",
         xy=(thds[idx_last], p99[idx_last]),
-        xytext=(thds[idx_last] - 4.2, max(p99) * 1.07),
-        ha="center",
+        xytext=(thds[idx_last] - 0.6, max(p99) * 1.12),
+        ha="right",
         arrowprops=dict(arrowstyle="->", color=C_RED, lw=1.1),
         fontsize=8.0,
         fontweight="bold",
@@ -875,23 +877,23 @@ def gen_b_fig8(metrics: dict[str, Any]) -> None:
         ax1.text(bar.get_x() + bar.get_width() / 2, v + 0.1, f"{v:.3f}", ha="center", va="bottom", fontsize=7.2, color=C_TEAL, fontweight="bold")
 
     ax1.text(
-        0.49,
+        0.50,
         0.74,
-        f"实库混合读写完整性核验（4 读 + 40x10 写）：\n"
-        f"- 10/10 返回率：100% (short_reads=0)；Pre/Post Recall: {a_heap['pre_write_recall_at_10']*100:.1f}% / {a_heap['post_write_recall_at_10_unrefreshed']*100:.0f}%\n"
-        f"- HEAP 纯读已因 rowset=16 快至 {a_heap['pure_read_4t_avg_ms']:.3f}ms，混合期间读 P99={a_heap['read_p99_ms']:.3f}ms\n"
+        f"实库并发提交与完整性核验（4 读 + 40x10 写，autocommit=True）：\n"
+        f"- 落盘确认：{a_heap['persisted_row_count']}/{s_iot['persisted_row_count']} 行全部提交；10/10 完整返回 (short_reads=0)\n"
+        f"- 写后未刷新 Recall@10：ASYNC 堆表 {a_heap['post_write_recall_at_10_unrefreshed']*100:.2f}%（Delta 即刻合并）vs IOT {s_iot['post_write_recall_at_10_unrefreshed']*100:.1f}%\n"
         f"- 写均耗时：{a_heap['write_avg_ms']:.3f}ms vs {s_iot['write_avg_ms']:.3f}ms (快 {s_iot['write_avg_ms']/a_heap['write_avg_ms']:.1f}x)，完成读 {a_heap['read_count']} vs {s_iot['read_count']}",
         transform=ax1.transAxes,
         ha="center",
         va="center",
-        fontsize=7.2,
+        fontsize=7.1,
         color=C_DARK,
         bbox=dict(boxstyle="round,pad=0.28", fc="#F0FDFA", ec=C_TEAL, lw=0.8),
     )
     ax1.set_xticks(xb)
     ax1.set_xticklabels(cats, fontsize=7.8)
     ax1.set_ylabel("延迟 (ms)")
-    ax1.set_ylim(0, max(sync_vals) * 1.92)
+    ax1.set_ylim(0, max(sync_vals) * 2.05)
     ax1.grid(True, axis="y", alpha=0.6)
     ax1.set_title("B. Live seekdb 纯读基线 vs 混合读写延迟", fontweight="bold", pad=10)
     ax1.legend(loc="upper left", fontsize=7.6, framealpha=0.95)
@@ -926,7 +928,7 @@ def main() -> None:
     ef_rows = load_csv("exp5_ef_slo_curve.csv")
     conc_rows = load_csv("exp5_seekdb_concurrency.csv")
 
-    gen_b_fig1()
+    gen_b_fig1(metrics)
     gen_b_fig2(metrics, exp1_rows)
     gen_b_fig3(metrics)
     gen_b_fig4(metrics)
