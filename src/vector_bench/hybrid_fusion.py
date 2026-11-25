@@ -1,4 +1,4 @@
-"""Hybrid retrieval: BM25 lexical scoring, Linear Score Normalization vs RRF (SIGIR 2009)."""
+"""Hybrid retrieval: Okapi BM25, Linear Min-Max vs Rank-based RRF (SIGIR 2009), and Relevance Metrics."""
 
 from collections import Counter, defaultdict
 import math
@@ -15,7 +15,7 @@ def tokenize(text: str) -> list[str]:
 
 
 class BM25Index:
-    """Clean Okapi BM25 inverted index."""
+    """Okapi BM25 inverted index."""
 
     def __init__(self, docs: list[str], k1: float = 1.5, b: float = 0.75):
         self.k1 = k1
@@ -40,7 +40,7 @@ class BM25Index:
     def search(
         self,
         query_text: str,
-        top_k: int = 50,
+        top_k: int = 100,
         mask: np.ndarray | None = None,
     ) -> list[tuple[int, float]]:
         scores: dict[int, float] = defaultdict(float)
@@ -66,7 +66,7 @@ def rrf_fuse(
 ) -> list[int]:
     """
     Reciprocal Rank Fusion (Cormack et al., SIGIR 2009):
-        RRF(d) = sum_i 1 / (k_rrf + rank_i(d)), where rank_i(d) starts at 1.
+        RRF(d) = sum_i 1 / (k_rrf + rank_i(d)), where rank_i(d) >= 1.
     """
     scores: dict[int, float] = defaultdict(float)
     for rlist in ranked_lists:
@@ -77,14 +77,12 @@ def rrf_fuse(
 
 
 def linear_minmax_fuse(
-    dense_cands: list[tuple[int, float]],  # (doc_id, l2_dist: lower better)
-    sparse_cands: list[tuple[int, float]], # (doc_id, bm25_score: higher better)
+    dense_cands: list[tuple[int, float]],
+    sparse_cands: list[tuple[int, float]],
     alpha: float = 0.5,
     top_k: int = 10,
 ) -> list[int]:
-    """
-    Linear Min-Max weighted fusion: demonstrates sensitivity to score scale & outliers.
-    """
+    """Linear Min-Max weighted fusion (sensitive to uncalibrated score scales & outliers)."""
     dense_sim: dict[int, float] = {}
     if dense_cands:
         dists = np.array([d for _, d in dense_cands], dtype=np.float32)
@@ -113,7 +111,7 @@ def linear_minmax_fuse(
 def dense_candidates(
     vectors: np.ndarray,
     query_vec: np.ndarray,
-    top_k: int = 50,
+    top_k: int = 100,
     mask: np.ndarray | None = None,
 ) -> list[tuple[int, float]]:
     if mask is not None:
@@ -128,3 +126,18 @@ def dense_candidates(
     n_out = min(top_k, len(dists))
     idx = np.argsort(dists)[:n_out]
     return [(int(i), float(dists[i])) for i in idx]
+
+
+def compute_relevance_recall_and_mrr(pred_ids: list[int], relevant_set: set[int], k: int = 10) -> tuple[float, float]:
+    """Compute End-to-End Relevance Recall@K (hit fraction over min(|rel|, K)) and MRR@K."""
+    top = pred_ids[:k]
+    if not relevant_set:
+        return 0.0, 0.0
+    hits = len(set(top) & relevant_set)
+    recall = hits / float(min(len(relevant_set), k))
+    rr = 0.0
+    for rank_0, doc_id in enumerate(top):
+        if doc_id in relevant_set:
+            rr = 1.0 / (rank_0 + 1)
+            break
+    return recall, rr

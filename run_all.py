@@ -21,19 +21,19 @@ def main():
     results_dir = ROOT / "results"
     results_dir.mkdir(parents=True, exist_ok=True)
 
-    print("[1/5] Running Exp 1: Curse of Dimensionality & Metric Equivalence...")
+    print("[1/5] Running Exp 1: Curse of Dimensionality (InstrumentedKDTree) & Metric Equivalence...")
     r1 = exp1_curse_and_metrics.run(results_dir)
 
-    print("[2/5] Running Exp 2: ANN & Quantization Pareto + Live seekdb Engine...")
+    print("[2/5] Running Exp 2: ANN & Quantization (PQ-256, RaBitQ) + Live seekdb Engine (N=2,000, D=384)...")
     r2 = exp2_ann_and_quantization.run(results_dir)
 
-    print("[3/5] Running Exp 3: Filtered ANN Selectivity Collapse & ACORN 2-Hop...")
+    print("[3/5] Running Exp 3: Filtered ANN Selectivity Sweep & ACORN-gamma...")
     r3 = exp3_filtered_ann_collapse.run(results_dir)
 
-    print("[4/5] Running Exp 4: Hybrid Search RRF vs Linear Fusion...")
+    print("[4/5] Running Exp 4: Real 384-D Hybrid Search Fusion (Dense vs BM25 vs Linear vs RRF)...")
     r4 = exp4_hybrid_rrf_vs_linear.run(results_dir)
 
-    print("[5/5] Running Exp 5: Recall-QPS-P99 SLO & Dual-Layer Delta+Snapshot P99...")
+    print("[5/5] Running Exp 5: ef_search Sweep, Live Multi-Thread seekdb Concurrency & R/W Simulation...")
     r5 = exp5_slo_and_delta_snapshot_p99.run(results_dir)
 
     summary = {

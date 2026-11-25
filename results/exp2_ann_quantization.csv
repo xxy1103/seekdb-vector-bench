@@ -1,10 +1,11 @@
-index,bytes_per_vec,compression_ratio,build_sec,recall_at_10,qps,p99_ms
-Flat (FP32 Exact),512.0,1.0,0.0,1.0,5373.5,0.215
-SQ8 (8-bit Scalar),128.0,4.0,0.001,0.925,1427.2,0.769
-RaBitQ 1-bit (No Refine),24.0,21.33,0.003,0.4317,1106.7,1.023
-RaBitQ 1-bit + Refine(k=60),24.0,21.33,0.003,0.8983,1316.1,0.933
-IVF-Flat (nprobe=8),520.0,0.98,0.02,1.0,1982.4,0.71
-"IVF-PQ (m=16, nprobe=8, No Refine)",20.0,25.6,0.091,0.2183,1355.7,0.922
-"IVF-PQ (m=16, nprobe=12, Refine 5x)",20.0,25.6,0.091,0.6417,1078.4,1.249
-"HNSW (M=24, ef=64)",712.0,0.72,101.232,0.845,1266.2,0.962
-"HNSW (M=24, ef=128)",712.0,0.72,101.232,0.8983,764.4,1.438
+index,index_bytes_per_vec,raw_refine_bytes_per_vec,compression_vs_fp32,avg_dist_evals,ann_recall_at_10
+Flat (FP32 Exact),1536.0,0.0,1.0,2000.0,1.0
+SQ8 (8-bit Scalar),384.0,0.0,4.0,2000.0,0.985
+RaBitQ 1-bit (No Refine),56.0,0.0,27.43,2000.0,0.3525
+RaBitQ 1-bit + Refine(k=60),56.0,1536.0,27.43,2060.0,0.8283
+"IVF-Flat (nlist=32, nprobe=8)",1544.0,0.0,0.99,561.2,1.0
+"IVF-PQ (m=24, K=256, No Refine)",28.0,0.0,54.86,561.2,0.7017
+"IVF-PQ (m=24, K=256, Refine 5x)",28.0,1536.0,54.86,611.2,0.9908
+"HNSW (M=16, ef=32)",1672.0,0.0,0.92,149.2,0.9342
+"HNSW (M=16, ef=64)",1672.0,0.0,0.92,209.2,0.9692
+"HNSW (M=16, ef=128)",1672.0,0.0,0.92,316.6,0.9917

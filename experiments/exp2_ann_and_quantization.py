@@ -1,77 +1,69 @@
-"""Experiment 2: ANN Index & Quantization Pareto Benchmark (Flat, IVF-Flat, IVF-PQ, HNSW, SQ8, RaBitQ) + Live seekdb."""
+"""Experiment 2: White-box ANN & Quantization (PQ K=256, RaBitQ) + Live seekdb Engine (N=2,000, D=384, Q=120)."""
 
 import csv
 from pathlib import Path
-import time
 import numpy as np
 
 from vector_bench.ann_indexes import FlatIndex, HNSWIndex, IVFIndex
-from vector_bench.dataset import generate_infra_corpus
+from vector_bench.dataset import generate_product_corpus
 from vector_bench.quantization import RaBitQIndex, SQ8Index
 from vector_bench.seekdb_runner import run_seekdb_live_benchmarks
+from experiments.exp4_hybrid_rrf_vs_linear import build_hybrid_relevance_gt
 
 
 def run(results_dir: Path) -> dict:
     results_dir.mkdir(parents=True, exist_ok=True)
-    corpus = generate_infra_corpus(n_docs=4000, n_queries=150, dim=128, seed=42)
-    vecs = corpus.vectors
-    queries = corpus.query_vectors[:60]
+    corpus = generate_product_corpus(n_docs=2000, seed=42)
+    vecs = corpus.unit_vectors
+    queries = corpus.query_unit_vectors
+    dim = vecs.shape[1]
 
     flat = FlatIndex(vecs)
     gt_sets = [set(flat.search(q, k=10)[0].tolist()) for q in queries]
 
     benchmark_rows: list[dict] = []
 
-    def eval_fn(name: str, bytes_per_vec: float, build_sec: float, fn):
+    def eval_fn(name: str, index_bytes: float, refine_raw_bytes: float, fn):
         recalls = []
-        lats_ms = []
-        t0 = time.perf_counter()
+        evals_list = []
         for q, gt in zip(queries, gt_sets):
-            tq = time.perf_counter()
-            pred = fn(q)
-            lats_ms.append((time.perf_counter() - tq) * 1000.0)
+            pred, ev = fn(q)
             recalls.append(len(set(pred.tolist()) & gt) / 10.0)
-        elapsed = time.perf_counter() - t0
-        arr = np.array(lats_ms)
+            evals_list.append(ev)
         benchmark_rows.append(
             {
                 "index": name,
-                "bytes_per_vec": round(float(bytes_per_vec), 2),
-                "compression_ratio": round(float(vecs.shape[1] * 4 / bytes_per_vec), 2),
-                "build_sec": round(float(build_sec), 3),
-                "recall_at_10": round(float(np.mean(recalls)), 4),
-                "qps": round(float(len(queries) / max(elapsed, 1e-9)), 1),
-                "p99_ms": round(float(np.percentile(arr, 99)), 3),
+                "index_bytes_per_vec": round(float(index_bytes), 1),
+                "raw_refine_bytes_per_vec": round(float(refine_raw_bytes), 1),
+                "compression_vs_fp32": round(float((dim * 4) / index_bytes), 2),
+                "avg_dist_evals": round(float(np.mean(evals_list)), 1),
+                "ann_recall_at_10": round(float(np.mean(recalls)), 4),
             }
         )
 
     # 1. Flat
-    eval_fn("Flat (FP32 Exact)", flat.bytes_per_vector(), 0.0, lambda q: flat.search(q, k=10)[0])
+    eval_fn("Flat (FP32 Exact)", flat.bytes_per_vector(), 0.0, lambda q: (flat.search(q, k=10)[0], len(vecs)))
 
     # 2. SQ8
-    t0 = time.perf_counter()
     sq8 = SQ8Index.build(vecs)
-    sq8_build = time.perf_counter() - t0
-    eval_fn("SQ8 (8-bit Scalar)", sq8.bytes_per_vector(), sq8_build, lambda q: np.argsort(sq8.l2_squared_all(q))[:10])
+    eval_fn("SQ8 (8-bit Scalar)", sq8.bytes_per_vector(), 0.0, lambda q: (np.argsort(sq8.l2_squared_all(q))[:10], len(vecs)))
 
-    # 3. RaBitQ 1-bit + Refine Top-40
-    t0 = time.perf_counter()
+    # 3. RaBitQ 1-bit (D=384 -> 384/8 + 8 = 56 B/vec, 27.43x compression!)
     rabitq = RaBitQIndex.build(vecs, seed=42)
-    rabitq_build = time.perf_counter() - t0
 
-    def rabitq_search(q: np.ndarray, refine_k: int) -> np.ndarray:
+    def rabitq_search(q: np.ndarray, refine_k: int) -> tuple[np.ndarray, int]:
         est = rabitq.estimate_l2_squared_all(q)
         if refine_k <= 10:
-            return np.argsort(est)[:10]
+            return np.argsort(est)[:10], len(vecs)
         cand = np.argpartition(est, refine_k)[:refine_k]
         diff = vecs[cand] - q
         exact = np.einsum("ij,ij->i", diff, diff)
-        return cand[np.argsort(exact)[:10]]
+        return cand[np.argsort(exact)[:10]], len(vecs) + refine_k
 
-    eval_fn("RaBitQ 1-bit (No Refine)", rabitq.bytes_per_vector(), rabitq_build, lambda q: rabitq_search(q, 10))
-    eval_fn("RaBitQ 1-bit + Refine(k=60)", rabitq.bytes_per_vector(), rabitq_build, lambda q: rabitq_search(q, 60))
+    eval_fn("RaBitQ 1-bit (No Refine)", rabitq.bytes_per_vector(), 0.0, lambda q: rabitq_search(q, 10))
+    eval_fn("RaBitQ 1-bit + Refine(k=60)", rabitq.bytes_per_vector(), dim * 4.0, lambda q: rabitq_search(q, 60))
 
-    # Verify RaBitQ theoretical unbiasedness & error decay across D = {64, 128, 256, 512}
+    # RaBitQ theoretical unbiasedness & 1/sqrt(D) error scaling across D = {64, 128, 256, 512}
     rabitq_error_curve = []
     rng = np.random.default_rng(7)
     for d_test in [64, 128, 256, 512]:
@@ -96,31 +88,28 @@ def run(results_dir: Path) -> dict:
             }
         )
 
-    # 4. IVF-Flat & IVF-PQ
-    t0 = time.perf_counter()
-    ivf_flat = IVFIndex(vecs, nlist=64, use_pq=False, seed=42)
-    ivf_flat_build = time.perf_counter() - t0
-    eval_fn("IVF-Flat (nprobe=8)", ivf_flat.bytes_per_vector(), ivf_flat_build, lambda q: ivf_flat.search(q, k=10, nprobe=8)[0])
+    # 4. IVF-Flat & standard 8-bit IVF-PQ (m=24, K=256)
+    ivf_flat = IVFIndex(vecs, nlist=32, use_pq=False, seed=42)
+    eval_fn("IVF-Flat (nlist=32, nprobe=8)", ivf_flat.bytes_per_vector(), 0.0, lambda q: (ivf_flat.search(q, k=10, nprobe=8)[0], ivf_flat.search(q, k=10, nprobe=8)[2]))
 
-    t0 = time.perf_counter()
-    ivf_pq = IVFIndex(vecs, nlist=64, use_pq=True, pq_m=16, pq_k=64, seed=42)
-    ivf_pq_build = time.perf_counter() - t0
-    eval_fn("IVF-PQ (m=16, nprobe=8, No Refine)", ivf_pq.bytes_per_vector(), ivf_pq_build, lambda q: ivf_pq.search(q, k=10, nprobe=8, refine_factor=1)[0])
-    eval_fn("IVF-PQ (m=16, nprobe=12, Refine 5x)", ivf_pq.bytes_per_vector(), ivf_pq_build, lambda q: ivf_pq.search(q, k=10, nprobe=12, refine_factor=5)[0])
+    ivf_pq = IVFIndex(vecs, nlist=32, use_pq=True, pq_m=24, pq_k=256, seed=42)
+    eval_fn("IVF-PQ (m=24, K=256, No Refine)", ivf_pq.bytes_per_vector(), 0.0, lambda q: (ivf_pq.search(q, k=10, nprobe=8, refine_factor=1)[0], ivf_pq.search(q, k=10, nprobe=8, refine_factor=1)[2]))
+    eval_fn("IVF-PQ (m=24, K=256, Refine 5x)", ivf_pq.bytes_per_vector(), dim * 4.0, lambda q: (ivf_pq.search(q, k=10, nprobe=8, refine_factor=5)[0], ivf_pq.search(q, k=10, nprobe=8, refine_factor=5)[2]))
 
-    # 5. HNSW (M=24, ef_construction=120)
-    hnsw = HNSWIndex(dim=128, M=24, ef_construction=120, seed=42)
-    hnsw_build = hnsw.build(vecs)
-    eval_fn("HNSW (M=24, ef=64)", hnsw.bytes_per_vector(), hnsw_build, lambda q: hnsw.search(q, k=10, ef_search=64)[0])
-    eval_fn("HNSW (M=24, ef=128)", hnsw.bytes_per_vector(), hnsw_build, lambda q: hnsw.search(q, k=10, ef_search=128)[0])
+    # 5. HNSW (M=16, ef_construction=80)
+    hnsw = HNSWIndex(dim=dim, M=16, ef_construction=80, seed=42)
+    hnsw.build(vecs)
+    for ef in [32, 64, 128]:
+        eval_fn(f"HNSW (M=16, ef={ef})", hnsw.bytes_per_vector(), 0.0, lambda q, _ef=ef: (hnsw.search(q, k=10, ef_search=_ef)[0], hnsw.search(q, k=10, ef_search=_ef)[2]))
 
     with open(results_dir / "exp2_ann_quantization.csv", "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=list(benchmark_rows[0].keys()))
         writer.writeheader()
         writer.writerows(benchmark_rows)
 
-    # 6. Live seekdb Embedded Engine (VSAG + OB IVF)
-    seekdb_live = run_seekdb_live_benchmarks(corpus, n_subset=1200)
+    # 6. Live OceanBase seekdb-v1.4.1.0 benchmark across all 2,000 docs & 120 queries
+    gt_rel = build_hybrid_relevance_gt(corpus)
+    seekdb_live = run_seekdb_live_benchmarks(corpus, hybrid_relevance_gt=gt_rel)
 
     return {
         "whitebox_pareto": benchmark_rows,

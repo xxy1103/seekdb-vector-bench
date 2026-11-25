@@ -1,120 +1,117 @@
-"""Experiment 4: Hybrid Search Fusion Benchmark (Dense vs BM25 vs Linear Min-Max vs RRF)."""
+"""Experiment 4: Honest Hybrid Search Evaluation (Real 384-D all-MiniLM-L6-v2 vs BM25 vs Linear vs RRF)."""
 
 import csv
 from pathlib import Path
 import numpy as np
 
-from vector_bench.dataset import generate_infra_corpus
+from vector_bench.dataset import ProductCorpus, generate_product_corpus
 from vector_bench.hybrid_fusion import (
     BM25Index,
+    compute_relevance_recall_and_mrr,
     dense_candidates,
     linear_minmax_fuse,
     rrf_fuse,
 )
-from vector_bench.metrics import l2_squared_batch
 
 
-def _oracle_relevance_ranking(corpus, q_idx: int, top_k: int = 10) -> set[int]:
+def build_hybrid_relevance_gt(corpus: ProductCorpus) -> list[set[int]]:
     """
-    Construct objective ground-truth top-K relevant docs per query type:
-    - semantic: same topic_id + closest dense distance
-    - exact_code: must contain the target error_code + same topic preferred + closest dense
-    - compound: must match component filter + target error_code + closest dense
+    Construct objective ground-truth relevant document sets (0-indexed) strictly from query intent:
+    - semantic: all catalog items sharing the target functional archetype (profile_ids == target_profile)
+    - exact_sku: items carrying the exact queried SKU code (1-2 items)
+    - compound: items matching (category == target_cat AND price < price_cap AND sku_code == target_sku)
+                or (category == target_cat AND price < price_cap AND profile_id == target_profile)
     """
-    q_type = corpus.query_types[q_idx]
-    q_vec = corpus.query_vectors[q_idx]
-    q_topic = int(corpus.query_topic_ids[q_idx])
-    q_code = corpus.query_error_codes[q_idx]
-    q_comp = corpus.query_target_comp[q_idx]
-
-    dists = l2_squared_batch(q_vec, corpus.vectors)
-    n = len(dists)
-
-    if q_type == "semantic":
-        mask = corpus.topic_ids == q_topic
-        cand = np.where(mask)[0]
-    elif q_type == "exact_code":
-        mask = np.array([c == q_code for c in corpus.error_codes])
-        cand = np.where(mask)[0]
-    else:  # compound
-        mask = np.array(
-            [(corpus.components[i] == q_comp and corpus.error_codes[i] == q_code) for i in range(n)]
-        )
-        cand = np.where(mask)[0]
-        if len(cand) < top_k:
-            # Relax to component + topic match if strict intersection < 10
-            mask2 = np.array([(corpus.components[i] == q_comp and corpus.topic_ids[i] == q_topic) for i in range(n)])
-            cand = np.where(mask | mask2)[0]
-
-    ordered = cand[np.argsort(dists[cand])]
-    return set(ordered[:top_k].tolist())
+    gt_list: list[set[int]] = []
+    n = len(corpus.ids)
+    for qi in range(len(corpus.query_texts)):
+        qt = corpus.query_types[qi]
+        if qt == "semantic":
+            tp = int(corpus.query_target_profile[qi])
+            rel = set(np.where(corpus.profile_ids == tp)[0].tolist())
+        elif qt == "exact_sku":
+            tsku = corpus.query_target_sku[qi]
+            rel = {i for i in range(n) if corpus.sku_codes[i] == tsku}
+        else:
+            tcat = corpus.query_target_cat[qi]
+            tcap = float(corpus.query_price_cap[qi])
+            tsku = corpus.query_target_sku[qi]
+            tp = int(corpus.query_target_profile[qi])
+            exact_hits = {
+                i for i in range(n)
+                if corpus.categories[i] == tcat and float(corpus.prices[i]) < tcap and corpus.sku_codes[i] == tsku
+            }
+            if exact_hits:
+                rel = exact_hits
+            else:
+                rel = {
+                    i for i in range(n)
+                    if corpus.categories[i] == tcat and float(corpus.prices[i]) < tcap and corpus.profile_ids[i] == tp
+                }
+        gt_list.append(rel)
+    return gt_list
 
 
 def run(results_dir: Path) -> dict:
     results_dir.mkdir(parents=True, exist_ok=True)
-    corpus = generate_infra_corpus(n_docs=4000, n_queries=150, dim=128, seed=42)
+    corpus = generate_product_corpus(n_docs=2000, seed=42)
     bm25 = BM25Index(corpus.texts)
+    gt_list = build_hybrid_relevance_gt(corpus)
 
-    methods = ["Dense-Only", "BM25-Only", "Linear-MinMax (alpha=0.5)", "RRF (k=60)", "RRF + Exact Rerank"]
-    by_type: dict[str, dict[str, list[float]]] = {
-        qt: {m: [] for m in methods} for qt in ["semantic", "exact_code", "compound", "overall"]
+    methods = ["Dense-Only (384-D)", "BM25-Only", "Linear-MinMax (alpha=0.5)", "RRF (k=60)"]
+    rec_by_type: dict[str, dict[str, list[float]]] = {
+        qt: {m: [] for m in methods} for qt in ["semantic", "exact_sku", "compound", "overall"]
+    }
+    mrr_by_type: dict[str, dict[str, list[float]]] = {
+        qt: {m: [] for m in methods} for qt in ["semantic", "exact_sku", "compound", "overall"]
     }
 
-    for q_idx in range(len(corpus.query_vectors)):
-        q_type = corpus.query_types[q_idx]
-        q_vec = corpus.query_vectors[q_idx]
-        q_txt = corpus.query_texts[q_idx]
-        q_comp = corpus.query_target_comp[q_idx]
+    for qi in range(len(corpus.query_texts)):
+        qt = corpus.query_types[qi]
+        q_vec = corpus.query_unit_vectors[qi]
+        q_txt = corpus.query_texts[qi]
+        gt = gt_list[qi]
 
-        # Apply structured SQL predicate for compound queries
-        mask = np.array([c == q_comp for c in corpus.components]) if q_type == "compound" else None
+        mask = None
+        if qt == "compound":
+            tcat = corpus.query_target_cat[qi]
+            tcap = float(corpus.query_price_cap[qi])
+            mask = np.array(
+                [corpus.categories[i] == tcat and float(corpus.prices[i]) < tcap for i in range(len(corpus.ids))],
+                dtype=bool,
+            )
 
-        gt = _oracle_relevance_ranking(corpus, q_idx, top_k=10)
-        denom = float(max(len(gt), 1))
-
-        d_cands = dense_candidates(corpus.vectors, q_vec, top_k=100, mask=mask)
-        b_cands = bm25.search(q_txt, top_k=100, mask=mask)
+        d_cands = dense_candidates(corpus.unit_vectors, q_vec, top_k=60, mask=mask)
+        b_cands = bm25.search(q_txt, top_k=60, mask=mask)
 
         dense_ids = [doc_id for doc_id, _ in d_cands]
         bm25_ids = [doc_id for doc_id, _ in b_cands]
-        # Linear Min-Max with alpha=0.5 is sensitive to L2 vs BM25 score distribution skew
         linear_ids = linear_minmax_fuse(d_cands, b_cands, alpha=0.5, top_k=10)
         rrf_ids = rrf_fuse([dense_ids, bm25_ids], k_rrf=60, top_k=10)
 
-        # Simulate Cross-Encoder / AI_RERANK over Top-30 RRF candidates using multi-signal oracle proxy
-        rrf_30 = rrf_fuse([dense_ids, bm25_ids], k_rrf=60, top_k=30)
-        q_code = corpus.query_error_codes[q_idx]
-        q_topic = int(corpus.query_topic_ids[q_idx])
-        reranked = sorted(
-            rrf_30,
-            key=lambda doc_id: (
-                0 if (q_code != "NONE" and corpus.error_codes[doc_id] == q_code) else 1,
-                0 if corpus.topic_ids[doc_id] == q_topic else 1,
-                float(np.sum((corpus.vectors[doc_id] - q_vec) ** 2)),
-            ),
-        )[:10]
-
         preds = {
-            "Dense-Only": dense_ids[:10],
+            "Dense-Only (384-D)": dense_ids[:10],
             "BM25-Only": bm25_ids[:10],
             "Linear-MinMax (alpha=0.5)": linear_ids,
             "RRF (k=60)": rrf_ids,
-            "RRF + Exact Rerank": reranked,
         }
 
         for m, pids in preds.items():
-            rec = len(set(pids) & gt) / denom
-            by_type[q_type][m].append(rec)
-            by_type["overall"][m].append(rec)
+            rec, mrr = compute_relevance_recall_and_mrr(pids, gt, k=10)
+            rec_by_type[qt][m].append(rec)
+            rec_by_type["overall"][m].append(rec)
+            mrr_by_type[qt][m].append(mrr)
+            mrr_by_type["overall"][m].append(mrr)
 
     rows = []
-    for qt in ["semantic", "exact_code", "compound", "overall"]:
+    for qt in ["semantic", "exact_sku", "compound", "overall"]:
         for m in methods:
             rows.append(
                 {
                     "query_type": qt,
                     "method": m,
-                    "recall_at_10": round(float(np.mean(by_type[qt][m])), 4),
+                    "relevance_recall_at_10": round(float(np.mean(rec_by_type[qt][m])), 4),
+                    "mrr_at_10": round(float(np.mean(mrr_by_type[qt][m])), 4),
                 }
             )
 
