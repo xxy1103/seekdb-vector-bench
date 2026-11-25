@@ -30,12 +30,13 @@ def run(results_dir: Path) -> dict:
         writer.writeheader()
         writer.writerows(slo_rows)
 
-    # 5B: REAL Multi-Threaded Concurrency QPS-P99 + Live Mixed R/W on seekdb-v1.4.1.0
+    # 5B: REAL Multi-Threaded Concurrency QPS-P99 + Verified Live Mixed R/W on seekdb-v1.4.1.0
     seekdb_mt = run_seekdb_concurrency_benchmark(
         vectors=vecs,
         queries=queries,
         thread_counts=[1, 2, 4, 8, 12, 16],
-        queries_per_thread=50,
+        queries_per_thread=150,
+        n_trials=3,
     )
     with open(results_dir / "exp5_seekdb_concurrency.csv", "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=list(seekdb_mt["concurrency_curve"][0].keys()))

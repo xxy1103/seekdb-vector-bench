@@ -58,11 +58,13 @@ def run_seekdb_concurrency_benchmark(
     vectors: np.ndarray,
     queries: np.ndarray,
     thread_counts: list[int] | None = None,
-    queries_per_thread: int = 50,
+    queries_per_thread: int = 150,
+    n_trials: int = 3,
 ) -> dict:
     """
     Measure REAL multi-threaded QPS vs P95/P99 queueing latency on native OceanBase seekdb-v1.4.1.0
-    (N=2,000, D=384 HNSW index) across concurrent client connections.
+    (N=2,000, D=384 HNSW index) across concurrent client connections, plus verified Mixed R/W
+    with 10/10 row-count assertions, 4-thread pure-read baselines, and live Recall@10 checks.
     """
     if thread_counts is None:
         thread_counts = [1, 2, 4, 8, 12, 16]
@@ -99,49 +101,59 @@ def run_seekdb_concurrency_benchmark(
             for qs in q_strs
         ]
 
-        # Warmup
+        # Global warmup
         for s in sqls[:5]:
             cur.execute(s)
             cur.fetchall()
 
-        # 2. Multi-threaded QPS vs P99 sweep
+        # 2. Multi-threaded QPS vs P99 sweep (3 trials per thread count, pick median P99)
         for n_threads in thread_counts:
-            barrier = threading.Barrier(n_threads)
+            trial_results = []
+            for _trial in range(n_trials):
+                barrier = threading.Barrier(n_threads)
 
-            def _worker(tid: int) -> list[float]:
-                cn = pylibseekdb.connect(database="test")
-                cr = cn.cursor()
-                lats: list[float] = []
-                barrier.wait()
-                for j in range(queries_per_thread):
-                    sql = sqls[(tid * 13 + j) % len(sqls)]
-                    t0 = time.perf_counter()
-                    cr.execute(sql)
-                    _ = cr.fetchall()
-                    lats.append((time.perf_counter() - t0) * 1000.0)
-                cn.close()
-                return lats
+                def _worker(tid: int) -> list[float]:
+                    cn = pylibseekdb.connect(database="test")
+                    cr = cn.cursor()
+                    # Per-connection warmup before timed barrier
+                    for w_idx in range(3):
+                        cr.execute(sqls[(tid + w_idx) % len(sqls)])
+                        cr.fetchall()
+                    lats: list[float] = []
+                    barrier.wait()
+                    for j in range(queries_per_thread):
+                        sql = sqls[(tid * 13 + j) % len(sqls)]
+                        t0 = time.perf_counter()
+                        cr.execute(sql)
+                        rows = cr.fetchall()
+                        lats.append((time.perf_counter() - t0) * 1000.0)
+                        if len(rows) != 10:
+                            raise RuntimeError(f"Expected 10 rows in concurrency sweep, got {len(rows)}")
+                    cn.close()
+                    return lats
 
-            t_wall0 = time.perf_counter()
-            with ThreadPoolExecutor(max_workers=n_threads) as ex:
-                all_lists = list(ex.map(_worker, range(n_threads)))
-            wall_sec = time.perf_counter() - t_wall0
+                t_wall0 = time.perf_counter()
+                with ThreadPoolExecutor(max_workers=n_threads) as ex:
+                    all_lists = list(ex.map(_worker, range(n_threads)))
+                wall_sec = time.perf_counter() - t_wall0
 
-            merged = np.array([x for sub in all_lists for x in sub], dtype=np.float64)
-            total_q = len(merged)
-            out["concurrency_curve"].append(
-                {
-                    "threads": int(n_threads),
-                    "total_queries": int(total_q),
-                    "wall_sec": round(float(wall_sec), 3),
-                    "qps": round(float(total_q / max(wall_sec, 1e-9)), 1),
-                    "avg_ms": round(float(np.mean(merged)), 3),
-                    "p50_ms": round(float(np.percentile(merged, 50)), 3),
-                    "p95_ms": round(float(np.percentile(merged, 95)), 3),
-                    "p99_ms": round(float(np.percentile(merged, 99)), 3),
-                    "max_ms": round(float(np.max(merged)), 3),
-                }
-            )
+                merged = np.array([x for sub in all_lists for x in sub], dtype=np.float64)
+                total_q = len(merged)
+                trial_results.append(
+                    {
+                        "threads": int(n_threads),
+                        "total_queries": int(total_q),
+                        "wall_sec": round(float(wall_sec), 3),
+                        "qps": round(float(total_q / max(wall_sec, 1e-9)), 1),
+                        "avg_ms": round(float(np.mean(merged)), 3),
+                        "p50_ms": round(float(np.percentile(merged, 50)), 3),
+                        "p95_ms": round(float(np.percentile(merged, 95)), 3),
+                        "p99_ms": round(float(np.percentile(merged, 99)), 3),
+                        "max_ms": round(float(np.max(merged)), 3),
+                    }
+                )
+            trial_results.sort(key=lambda r: r["p99_ms"])
+            out["concurrency_curve"].append(trial_results[len(trial_results) // 2])
 
         # 3. Live seekdb Mixed Read+Write: SYNC_MODE=IMMEDIATE (IOT) vs SYNC_MODE=ASYNC (HEAP)
         cur.execute("DROP TABLE IF EXISTS prod_rw_sync")
@@ -165,6 +177,7 @@ def run_seekdb_concurrency_benchmark(
             """
         )
         base_n = 1500
+        write_n = 400
         for tname in ("prod_rw_sync", "prod_rw_async"):
             for start in range(0, base_n, 200):
                 end = min(start + 200, base_n)
@@ -172,20 +185,76 @@ def run_seekdb_concurrency_benchmark(
                 cur.execute(f"INSERT INTO {tname} VALUES {vals}")
             cur.execute("CALL DBMS_INDEX_MANAGER.REFRESH()")
 
-        insert_vecs = vec_strs[base_n : base_n + 200]
+        flat_pre = FlatIndex(vectors[:base_n])
+        flat_post = FlatIndex(vectors[: base_n + write_n])
+        eval_q = queries[:30]
+        gt_pre = [set(flat_pre.search(q, k=10)[0].tolist()) for q in eval_q]
+        gt_post = [set(flat_post.search(q, k=10)[0].tolist()) for q in eval_q]
+        insert_vecs = vec_strs[base_n : base_n + write_n]
+
+        def _measure_live_recall(tname: str, gt_sets: list[set[int]]) -> tuple[float, int]:
+            recalls = []
+            min_len = 10
+            for qi, gt in enumerate(gt_sets):
+                cur.execute(
+                    f"SELECT id, l2_distance(vec, '{q_strs[qi]}') AS d FROM {tname} ORDER BY d APPROXIMATE LIMIT 10"
+                )
+                rows = cur.fetchall()
+                min_len = min(min_len, len(rows))
+                got_ids = {int(r[0]) - 1 for r in rows}
+                recalls.append(len(got_ids & gt) / 10.0)
+            return round(float(np.mean(recalls)), 4), int(min_len)
 
         for mode_key, tname in [("sync_immediate_iot", "prod_rw_sync"), ("async_heap", "prod_rw_async")]:
+            pre_recall, pre_min = _measure_live_recall(tname, gt_pre)
+            assert pre_min == 10, f"{tname} pre-write returned {pre_min} rows < 10"
+
+            # 4-thread Pure-Read baseline before writes
+            barrier_pr = threading.Barrier(4)
+
+            def _pure_reader(tid: int) -> list[float]:
+                cn = pylibseekdb.connect(database="test")
+                cr = cn.cursor()
+                for w_i in range(3):
+                    cr.execute(f"SELECT id, l2_distance(vec, '{q_strs[(tid + w_i) % len(q_strs)]}') AS d FROM {tname} ORDER BY d APPROXIMATE LIMIT 10")
+                    cr.fetchall()
+                lats_pr: list[float] = []
+                barrier_pr.wait()
+                for j in range(80):
+                    qs = q_strs[(tid * 11 + j) % len(q_strs)]
+                    t0 = time.perf_counter()
+                    cr.execute(f"SELECT id, l2_distance(vec, '{qs}') AS d FROM {tname} ORDER BY d APPROXIMATE LIMIT 10")
+                    rows = cr.fetchall()
+                    lats_pr.append((time.perf_counter() - t0) * 1000.0)
+                    if len(rows) < 10:
+                        raise RuntimeError(f"{tname} pure read short return: {len(rows)}")
+                cn.close()
+                return lats_pr
+
+            with ThreadPoolExecutor(max_workers=4) as ex:
+                pr_lists = list(ex.map(_pure_reader, range(4)))
+            pr_arr = np.array([x for sub in pr_lists for x in sub], dtype=np.float64)
+
+            # 4-thread Mixed Read + Concurrent Batch Write
             stop_flag = threading.Event()
             read_lats: list[float] = []
             write_lats: list[float] = []
             rw_errs: list[str] = []
+            short_reads = 0
+            min_rows_seen = 10
             lock_l = threading.Lock()
 
             def _reader(tid: int):
+                nonlocal short_reads, min_rows_seen
                 try:
                     cn = pylibseekdb.connect(database="test")
                     cr = cn.cursor()
+                    for w_i in range(3):
+                        cr.execute(f"SELECT id, l2_distance(vec, '{q_strs[(tid + w_i) % len(q_strs)]}') AS d FROM {tname} ORDER BY d APPROXIMATE LIMIT 10")
+                        cr.fetchall()
                     local_lats = []
+                    local_short = 0
+                    local_min = 10
                     idx = 0
                     while not stop_flag.is_set():
                         qs = q_strs[(tid * 7 + idx) % len(q_strs)]
@@ -193,12 +262,17 @@ def run_seekdb_concurrency_benchmark(
                         cr.execute(
                             f"SELECT id, l2_distance(vec, '{qs}') AS d FROM {tname} ORDER BY d APPROXIMATE LIMIT 10"
                         )
-                        _ = cr.fetchall()
+                        rows = cr.fetchall()
                         local_lats.append((time.perf_counter() - t0) * 1000.0)
+                        if len(rows) < 10:
+                            local_short += 1
+                        local_min = min(local_min, len(rows))
                         idx += 1
                     cn.close()
                     with lock_l:
                         read_lats.extend(local_lats)
+                        short_reads += local_short
+                        min_rows_seen = min(min_rows_seen, local_min)
                 except Exception as e:
                     with lock_l:
                         rw_errs.append(f"reader:{e}")
@@ -230,9 +304,21 @@ def run_seekdb_concurrency_benchmark(
             for r in readers:
                 r.join()
 
-            r_arr = np.array(read_lats, dtype=np.float64) if read_lats else np.array([0.0])
-            w_arr = np.array(write_lats, dtype=np.float64) if write_lats else np.array([0.0])
+            assert short_reads == 0, f"{tname} had {short_reads} short reads (<10 rows) during mixed R/W"
+            assert not rw_errs, f"{tname} mixed R/W errors: {rw_errs}"
+
+            post_recall, post_min = _measure_live_recall(tname, gt_post)
+            assert post_min == 10, f"{tname} post-write returned {post_min} rows < 10"
+
+            r_arr = np.array(read_lats, dtype=np.float64)
+            w_arr = np.array(write_lats, dtype=np.float64)
             out["mixed_rw_live"][mode_key] = {
+                "pure_read_4t_avg_ms": round(float(np.mean(pr_arr)), 3),
+                "pure_read_4t_p99_ms": round(float(np.percentile(pr_arr, 99)), 3),
+                "pre_write_recall_at_10": pre_recall,
+                "post_write_recall_at_10_unrefreshed": post_recall,
+                "short_read_count": int(short_reads),
+                "min_rows_returned": int(min_rows_seen),
                 "read_count": int(len(read_lats)),
                 "read_avg_ms": round(float(np.mean(r_arr)), 3),
                 "read_p95_ms": round(float(np.percentile(r_arr, 95)), 3),
