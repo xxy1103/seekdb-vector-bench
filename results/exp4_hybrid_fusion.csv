@@ -1,0 +1,21 @@
+query_type,method,recall_at_10
+semantic,Dense-Only,0.736
+semantic,BM25-Only,0.01
+semantic,Linear-MinMax (alpha=0.5),0.426
+semantic,RRF (k=60),0.296
+semantic,RRF + Exact Rerank,0.86
+exact_code,Dense-Only,0.034
+exact_code,BM25-Only,0.13
+exact_code,Linear-MinMax (alpha=0.5),0.178
+exact_code,RRF (k=60),0.244
+exact_code,RRF + Exact Rerank,0.214
+compound,Dense-Only,0.046
+compound,BM25-Only,0.244
+compound,Linear-MinMax (alpha=0.5),0.244
+compound,RRF (k=60),0.136
+compound,RRF + Exact Rerank,0.33
+overall,Dense-Only,0.272
+overall,BM25-Only,0.128
+overall,Linear-MinMax (alpha=0.5),0.2827
+overall,RRF (k=60),0.2253
+overall,RRF + Exact Rerank,0.468

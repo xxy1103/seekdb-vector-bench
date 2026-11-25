@@ -1,0 +1,41 @@
+selectivity,strategy,recall_at_10,avg_dist_evals,avg_ms
+0.005,Pre-Filter (Exact Subset),1.0,20.0,0.007
+0.005,Post-Filter (K'=50),0.06,1145.3,0.773
+0.005,Post-Filter (K'=100),0.1333,1502.4,1.093
+0.005,In-Filter (Naive 1-Hop),0.19,1875.2,1.412
+0.005,ACORN-Style (2-Hop Bridge),0.67,14.0,0.525
+0.01,Pre-Filter (Exact Subset),1.0,40.0,0.008
+0.01,Post-Filter (K'=50),0.02,1145.3,0.776
+0.01,Post-Filter (K'=100),0.0667,1502.4,1.098
+0.01,In-Filter (Naive 1-Hop),0.11,1875.2,1.411
+0.01,ACORN-Style (2-Hop Bridge),0.91,37.0,1.31
+0.02,Pre-Filter (Exact Subset),1.0,80.0,0.012
+0.02,Post-Filter (K'=50),0.1767,1145.3,0.775
+0.02,Post-Filter (K'=100),0.3067,1502.4,1.1
+0.02,In-Filter (Naive 1-Hop),0.44,1861.3,1.411
+0.02,ACORN-Style (2-Hop Bridge),0.9933,80.0,2.76
+0.05,Pre-Filter (Exact Subset),1.0,200.0,0.024
+0.05,Post-Filter (K'=50),0.2267,1145.3,0.781
+0.05,Post-Filter (K'=100),0.4733,1502.4,1.112
+0.05,In-Filter (Naive 1-Hop),0.6133,1830.6,1.405
+0.05,ACORN-Style (2-Hop Bridge),0.9367,189.0,2.908
+0.1,Pre-Filter (Exact Subset),1.0,400.0,0.046
+0.1,Post-Filter (K'=50),0.42,1145.3,0.777
+0.1,Post-Filter (K'=100),0.7167,1502.4,1.104
+0.1,In-Filter (Naive 1-Hop),0.7733,1746.1,1.355
+0.1,ACORN-Style (2-Hop Bridge),0.9,355.1,2.981
+0.2,Pre-Filter (Exact Subset),1.0,800.0,0.096
+0.2,Post-Filter (K'=50),0.7433,1145.3,0.779
+0.2,Post-Filter (K'=100),0.8,1502.4,1.105
+0.2,In-Filter (Naive 1-Hop),0.8433,1367.8,1.18
+0.2,ACORN-Style (2-Hop Bridge),0.9467,683.7,2.892
+0.5,Pre-Filter (Exact Subset),1.0,2000.0,0.227
+0.5,Post-Filter (K'=50),0.7567,1145.3,0.781
+0.5,Post-Filter (K'=100),0.82,1502.4,1.108
+0.5,In-Filter (Naive 1-Hop),0.75,836.0,0.741
+0.5,ACORN-Style (2-Hop Bridge),0.97,1474.5,2.62
+1.0,Pre-Filter (Exact Subset),1.0,4000.0,0.447
+1.0,Post-Filter (K'=50),0.8033,1145.3,0.788
+1.0,Post-Filter (K'=100),0.8733,1502.4,1.11
+1.0,In-Filter (Naive 1-Hop),0.8033,1145.3,0.806
+1.0,ACORN-Style (2-Hop Bridge),0.8033,1145.3,0.771

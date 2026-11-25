@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 620" width="1200" height="620" font-family="PingFang SC, Hiragino Sans GB, Arial Unicode MS, -apple-system, sans-serif">
+  <rect width="1200" height="620" fill="#FFFFFF" rx="8"/>
+  <defs>
+    <marker id="arrow-navy" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#1E3A8A"/>
+    </marker>
+    <marker id="arrow-teal" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#0D9488"/>
+    </marker>
+    <marker id="arrow-red" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#DC2626"/>
+    </marker>
+    <marker id="arrow-slate" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#475569"/>
+    </marker>
+  </defs>
+  <text x="600" y="36" font-size="20" font-weight="bold" fill="#1E3A8A" text-anchor="middle">OceanBase seekdb 向量检索与混合查询全链路技术全景图（方向二核心框架）</text>
+  <text x="600" y="58" font-size="13" font-weight="normal" fill="#475569" text-anchor="middle">从高维几何空间与数学度量，到 VSAG 量化图引擎、CBO 自适应过滤下推与双层异步 SLO 治理</text>
+  <rect x="35" y="82" width="265" height="495" fill="#EFF6FF" stroke="#2563EB" stroke-width="1.8" rx="10"/>
+  <rect x="35" y="82" width="265" height="38" fill="#2563EB" stroke="#2563EB" stroke-width="1.0" rx="8"/>
+  <text x="167.5" y="106" font-size="14" font-weight="bold" fill="#FFFFFF" text-anchor="middle">1. 表征空间与距离度量</text>
+  <rect x="47" y="136" width="241" height="94" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2" rx="6"/>
+  <text x="57" y="158" font-size="13" font-weight="bold" fill="#2563EB" text-anchor="start">Dense vs Sparse 互补</text>
+  <text x="57" y="181" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">语义泛化 vs 精确词项/错误码</text>
+  <rect x="47" y="244" width="241" height="94" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2" rx="6"/>
+  <text x="57" y="266" font-size="13" font-weight="bold" fill="#2563EB" text-anchor="start">维度灾难 (Curse of Dim)</text>
+  <text x="57" y="289" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">d→∞ 时 D_min/D_max → 1</text>
+  <text x="57" y="309" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">KD-Tree 退化为 O(N) 扫描</text>
+  <rect x="47" y="352" width="241" height="94" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2" rx="6"/>
+  <text x="57" y="374" font-size="13" font-weight="bold" fill="#2563EB" text-anchor="start">度量严格等价条件</text>
+  <text x="57" y="397" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">仅当 ||x||₂=||y||₂=1 时:</text>
+  <text x="57" y="417" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">L2 排序 ≡ IP ≡ Cosine</text>
+  <rect x="47" y="460" width="241" height="94" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2" rx="6"/>
+  <text x="57" y="482" font-size="13" font-weight="bold" fill="#2563EB" text-anchor="start">硬件访存加速</text>
+  <text x="57" y="505" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">Memory-bound 瓶颈突破:</text>
+  <text x="57" y="525" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">AVX-512 / NEON + LUT 查表</text>
+  <rect x="325" y="82" width="275" height="495" fill="#F0FDFA" stroke="#0D9488" stroke-width="1.8" rx="10"/>
+  <rect x="325" y="82" width="275" height="38" fill="#0D9488" stroke="#0D9488" stroke-width="1.0" rx="8"/>
+  <text x="462.5" y="106" font-size="14" font-weight="bold" fill="#FFFFFF" text-anchor="middle">2. ANN 索引与量化 (VSAG)</text>
+  <rect x="337" y="136" width="251" height="94" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2" rx="6"/>
+  <text x="347" y="158" font-size="13" font-weight="bold" fill="#0D9488" text-anchor="start">IVF-PQ + Refine</text>
+  <text x="347" y="181" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">Voronoi 倒排分桶 + 子空间码本</text>
+  <text x="347" y="201" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">ADC 查表粗排 → FP32 精排</text>
+  <rect x="337" y="244" width="251" height="94" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2" rx="6"/>
+  <text x="347" y="266" font-size="13" font-weight="bold" fill="#0D9488" text-anchor="start">HNSW / VSAG HGraph</text>
+  <text x="347" y="289" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">分层导航小世界 (M, ef_search)</text>
+  <text x="347" y="309" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">痛点: 内存墙 + 软删连通退化</text>
+  <rect x="337" y="352" width="251" height="94" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2" rx="6"/>
+  <text x="347" y="374" font-size="13" font-weight="bold" fill="#0D9488" text-anchor="start">DiskANN (Vamana)</text>
+  <text x="347" y="397" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">RAM 存压缩码 + SSD 存全精度</text>
+  <text x="347" y="417" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">Beam Search 隐藏磁盘随机 I/O</text>
+  <rect x="337" y="460" width="251" height="94" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2" rx="6"/>
+  <text x="347" y="482" font-size="13" font-weight="bold" fill="#0D9488" text-anchor="start">RaBitQ (SIGMOD'24/25)</text>
+  <text x="347" y="505" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">随机正交旋转 + 1/多-bit 位运算</text>
+  <text x="347" y="525" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">严格无偏误差界 + 21x 压缩</text>
+  <rect x="625" y="82" width="275" height="495" fill="#FEF3C7" stroke="#D97706" stroke-width="1.8" rx="10"/>
+  <rect x="625" y="82" width="275" height="38" fill="#D97706" stroke="#D97706" stroke-width="1.0" rx="8"/>
+  <text x="762.5" y="106" font-size="14" font-weight="bold" fill="#FFFFFF" text-anchor="middle">3. 过滤与混合查询 (CBO)</text>
+  <rect x="637" y="136" width="251" height="94" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2" rx="6"/>
+  <text x="647" y="158" font-size="13" font-weight="bold" fill="#D97706" text-anchor="start">过滤三难困境 (选择率 σ)</text>
+  <text x="647" y="181" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">Post-Filter 低 σ 召回坍塌</text>
+  <text x="647" y="201" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">In-Filter 稀疏断图 / Pre 扫全表</text>
+  <rect x="637" y="244" width="251" height="94" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2" rx="6"/>
+  <text x="647" y="266" font-size="13" font-weight="bold" fill="#D97706" text-anchor="start">顶会与 seekdb 自适应</text>
+  <text x="647" y="289" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">ACORN 2-Hop 桥接 / VBase 松弛</text>
+  <text x="647" y="309" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">seekdb ADAPTIVE SCAN (PRE-FILTER)</text>
+  <rect x="637" y="352" width="251" height="94" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2" rx="6"/>
+  <text x="647" y="374" font-size="13" font-weight="bold" fill="#D97706" text-anchor="start">Single-SQL 混合召回</text>
+  <text x="647" y="397" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">标量过滤 + FULLTEXT BM25</text>
+  <text x="647" y="417" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">+ VSAG ANN 同引擎协同</text>
+  <rect x="637" y="460" width="251" height="94" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2" rx="6"/>
+  <text x="647" y="482" font-size="13" font-weight="bold" fill="#D97706" text-anchor="start">RRF 与 AI_RERANK</text>
+  <text x="647" y="505" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">RRF(d)=Σ 1/(k+rᵢ(d)) 鲁棒融合</text>
+  <text x="647" y="525" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">Cross-Encoder 精排有限候选</text>
+  <rect x="925" y="82" width="240" height="495" fill="#F5F3FF" stroke="#7C3AED" stroke-width="1.8" rx="10"/>
+  <rect x="925" y="82" width="240" height="38" fill="#7C3AED" stroke="#7C3AED" stroke-width="1.0" rx="8"/>
+  <text x="1045.0" y="106" font-size="14" font-weight="bold" fill="#FFFFFF" text-anchor="middle">4. SLO 与双层并发治理</text>
+  <rect x="937" y="136" width="216" height="94" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2" rx="6"/>
+  <text x="947" y="158" font-size="13" font-weight="bold" fill="#7C3AED" text-anchor="start">三角制约模型</text>
+  <text x="947" y="181" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">Recall@K ↔ QPS ↔ P99</text>
+  <text x="947" y="201" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">ef_search 拐点与带宽饱和</text>
+  <rect x="937" y="244" width="216" height="94" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2" rx="6"/>
+  <text x="947" y="266" font-size="13" font-weight="bold" fill="#7C3AED" text-anchor="start">P99 尾延迟五大元凶</text>
+  <text x="947" y="289" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">写锁阻塞 / 过滤膨胀 / Cache Miss</text>
+  <text x="947" y="309" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">带宽争抢 / Compaction 抢占</text>
+  <rect x="937" y="352" width="216" height="94" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2" rx="6"/>
+  <text x="947" y="374" font-size="13" font-weight="bold" fill="#7C3AED" text-anchor="start">Delta + Snapshot 双层</text>
+  <text x="947" y="397" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">写走 Change Stream → Delta 缓冲</text>
+  <text x="947" y="417" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">读无锁查 Snapshot + Delta 合并</text>
+  <rect x="937" y="460" width="216" height="94" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2" rx="6"/>
+  <text x="947" y="482" font-size="13" font-weight="bold" fill="#7C3AED" text-anchor="start">显式一致性控制</text>
+  <text x="947" y="505" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">Delete Bitmap 毫秒级屏蔽</text>
+  <text x="947" y="525" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">DBMS_INDEX_MANAGER.REFRESH()</text>
+  <line x1="300" y1="330" x2="325" y2="330" stroke="#1E3A8A" stroke-width="2.4" marker-end="url(#arrow-navy)"/>
+  <line x1="600" y1="330" x2="625" y2="330" stroke="#1E3A8A" stroke-width="2.4" marker-end="url(#arrow-navy)"/>
+  <line x1="900" y1="330" x2="925" y2="330" stroke="#1E3A8A" stroke-width="2.4" marker-end="url(#arrow-navy)"/>
+  <text x="600" y="602" font-size="12" font-weight="bold" fill="#475569" text-anchor="middle">实证闭环: seekdb-vector-bench (Exp1–Exp5) + OceanBase seekdb-v1.4.1.0 原生引擎实测</text>
+</svg>

@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1220 660" width="1220" height="660" font-family="PingFang SC, Hiragino Sans GB, Arial Unicode MS, -apple-system, sans-serif">
+  <rect width="1220" height="660" fill="#FFFFFF" rx="8"/>
+  <defs>
+    <marker id="arrow-navy" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#1E3A8A"/>
+    </marker>
+    <marker id="arrow-teal" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#0D9488"/>
+    </marker>
+    <marker id="arrow-red" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#DC2626"/>
+    </marker>
+    <marker id="arrow-slate" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#475569"/>
+    </marker>
+  </defs>
+  <text x="610" y="34" font-size="19" font-weight="bold" fill="#1E3A8A" text-anchor="middle">主流 ANN 索引与量化内核原理对照及 antgroup/vsag 抽象架构</text>
+  <text x="610" y="56" font-size="12.5" font-weight="normal" fill="#475569" text-anchor="middle">从倒排乘积量化 (IVF-PQ)、多层导航图 (HNSW)、SSD 混合图 (DiskANN) 到正交 1-bit 无偏量化 (RaBitQ)</text>
+  <rect x="30" y="76" width="275" height="310" fill="#EFF6FF" stroke="#2563EB" stroke-width="1.7" rx="10"/>
+  <rect x="30" y="76" width="275" height="36" fill="#2563EB" stroke="#2563EB" stroke-width="1.0" rx="8"/>
+  <text x="167.5" y="99" font-size="12.5" font-weight="bold" fill="#FFFFFF" text-anchor="middle">1. IVF-PQ (聚类倒排 + 乘积量化)</text>
+  <text x="44" y="138" font-size="11.5" font-weight="normal" fill="#0F172A" text-anchor="start">① K-Means 划分 nlist Voronoi 桶</text>
+  <text x="44" y="171" font-size="11.5" font-weight="normal" fill="#0F172A" text-anchor="start">② 仅探查最近 nprobe 个桶 (缩小候选)</text>
+  <text x="44" y="204" font-size="11.5" font-weight="normal" fill="#0F172A" text-anchor="start">③ 残差切 M 段→码本量化为 M 字节</text>
+  <text x="44" y="237" font-size="11.5" font-weight="normal" fill="#0F172A" text-anchor="start">④ 查 M×K ADC 距离表累加 (零乘法)</text>
+  <text x="44" y="270" font-size="11.5" font-weight="normal" fill="#0F172A" text-anchor="start">⑤ Oversampling 取粗排 Top-K' 后</text>
+  <text x="44" y="303" font-size="11.5" font-weight="normal" fill="#0F172A" text-anchor="start">   回表读取 FP32 原向量 Refine 精排</text>
+  <rect x="40" y="346" width="255" height="30" fill="#FFFFFF" stroke="#2563EB" stroke-width="1.0" rx="5"/>
+  <text x="167.5" y="365" font-size="10.5" font-weight="bold" fill="#2563EB" text-anchor="middle">内存极省 (~20B) | 痛点: 低维子空间量化失真</text>
+  <rect x="325" y="76" width="275" height="310" fill="#F0FDFA" stroke="#0D9488" stroke-width="1.7" rx="10"/>
+  <rect x="325" y="76" width="275" height="36" fill="#0D9488" stroke="#0D9488" stroke-width="1.0" rx="8"/>
+  <text x="462.5" y="99" font-size="12.5" font-weight="bold" fill="#FFFFFF" text-anchor="middle">2. HNSW (分层导航小世界图)</text>
+  <text x="339" y="138" font-size="11.5" font-weight="normal" fill="#0F172A" text-anchor="start">① 指数衰减概率分配节点最高层 l</text>
+  <text x="339" y="171" font-size="11.5" font-weight="normal" fill="#0F172A" text-anchor="start">② 上层稀疏长跳边: 贪心快速逼近</text>
+  <text x="339" y="204" font-size="11.5" font-weight="normal" fill="#0F172A" text-anchor="start">③ 第 0 层稠密邻接表: 维护大小 efSearch</text>
+  <text x="339" y="237" font-size="11.5" font-weight="normal" fill="#0F172A" text-anchor="start">   的动态优先队列精细收敛</text>
+  <text x="339" y="270" font-size="11.5" font-weight="normal" fill="#0F172A" text-anchor="start">④ Algorithm 4 启发式选边保证连通</text>
+  <text x="339" y="303" font-size="11.5" font-weight="normal" fill="#0F172A" text-anchor="start">⑤ 物理删点会破坏小世界通路→软删</text>
+  <rect x="335" y="346" width="255" height="30" fill="#FFFFFF" stroke="#0D9488" stroke-width="1.0" rx="5"/>
+  <text x="462.5" y="365" font-size="10.5" font-weight="bold" fill="#0D9488" text-anchor="middle">高 Recall 高 QPS | 痛点: 图+向量 RAM &gt; 1.3x</text>
+  <rect x="620" y="76" width="275" height="310" fill="#FEF3C7" stroke="#D97706" stroke-width="1.7" rx="10"/>
+  <rect x="620" y="76" width="275" height="36" fill="#D97706" stroke="#D97706" stroke-width="1.0" rx="8"/>
+  <text x="757.5" y="99" font-size="12.5" font-weight="bold" fill="#FFFFFF" text-anchor="middle">3. DiskANN (Vamana SSD 分层)</text>
+  <text x="634" y="138" font-size="11.5" font-weight="normal" fill="#0F172A" text-anchor="start">① Vamana 单层图 + α-RNG 剪枝</text>
+  <text x="634" y="171" font-size="11.5" font-weight="normal" fill="#0F172A" text-anchor="start">   控直径更短，减少 SSD 随机跳转次数</text>
+  <text x="634" y="204" font-size="11.5" font-weight="normal" fill="#0F172A" text-anchor="start">② RAM 常驻 PQ/SQ 压缩向量 (~64B)</text>
+  <text x="634" y="237" font-size="11.5" font-weight="normal" fill="#0F172A" text-anchor="start">③ SSD 按 4KB 页将全精度向量与邻接</text>
+  <text x="634" y="270" font-size="11.5" font-weight="normal" fill="#0F172A" text-anchor="start">   表邻近打包读取 (Co-located Layout)</text>
+  <text x="634" y="303" font-size="11.5" font-weight="normal" fill="#0F172A" text-anchor="start">④ Beam Search 批量异步 io_uring 预取</text>
+  <rect x="630" y="346" width="255" height="30" fill="#FFFFFF" stroke="#D97706" stroke-width="1.0" rx="5"/>
+  <text x="757.5" y="365" font-size="10.5" font-weight="bold" fill="#D97706" text-anchor="middle">打破内存墙 (十亿级单机) | P99 受 SSD IOPS 影响</text>
+  <rect x="915" y="76" width="275" height="310" fill="#FDF2F8" stroke="#7C3AED" stroke-width="1.7" rx="10"/>
+  <rect x="915" y="76" width="275" height="36" fill="#7C3AED" stroke="#7C3AED" stroke-width="1.0" rx="8"/>
+  <text x="1052.5" y="99" font-size="12.5" font-weight="bold" fill="#FFFFFF" text-anchor="middle">4. RaBitQ (SIGMOD'24 无偏量化)</text>
+  <text x="929" y="138" font-size="11.5" font-weight="normal" fill="#0F172A" text-anchor="start">① 向量去中心化后乘随机正交矩阵 P</text>
+  <text x="929" y="171" font-size="11.5" font-weight="normal" fill="#0F172A" text-anchor="start">   均匀打散各维度能量防极端方差</text>
+  <text x="929" y="204" font-size="11.5" font-weight="normal" fill="#0F172A" text-anchor="start">② 1-bit 符号量化 {-1,+1}^D 打包位图</text>
+  <text x="929" y="237" font-size="11.5" font-weight="normal" fill="#0F172A" text-anchor="start">③ 附带 2 个 float 修正因子 (8B)</text>
+  <text x="929" y="270" font-size="11.5" font-weight="normal" fill="#0F172A" text-anchor="start">④ XNOR/AND + Popcount 算 &lt;q, x_bar&gt;</text>
+  <text x="929" y="303" font-size="11.5" font-weight="normal" fill="#0F172A" text-anchor="start">⑤ 数学证明期望严格无偏, 误差 ∝ 1/√D</text>
+  <rect x="925" y="346" width="255" height="30" fill="#FFFFFF" stroke="#7C3AED" stroke-width="1.0" rx="5"/>
+  <text x="1052.5" y="365" font-size="10.5" font-weight="bold" fill="#7C3AED" text-anchor="middle">21x+ 极致压缩 + 理论误差界 | VSAG/Milvus 已落地</text>
+  <rect x="30" y="412" width="1160" height="224" fill="#F8FAFC" stroke="#1E3A8A" stroke-width="2.0" rx="10"/>
+  <text x="610" y="440" font-size="15" font-weight="bold" fill="#1E3A8A" text-anchor="middle">seekdb 底层向量内核：ob-vsag 适配层与 antgroup/vsag 模块解耦架构</text>
+  <rect x="55" y="460" width="250" height="152" fill="#EFF6FF" stroke="#2563EB" stroke-width="1.5" rx="8"/>
+  <text x="180.0" y="484" font-size="12.5" font-weight="bold" fill="#2563EB" text-anchor="middle">seekdb SQL / 存储层</text>
+  <text x="67" y="512" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">src/storage/vector_index/</text>
+  <text x="67" y="536" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">• CREATE VECTOR INDEX ... LIB=vsag</text>
+  <text x="67" y="560" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">• TYPE: hnsw | hnsw_sq | hnsw_bq</text>
+  <text x="67" y="584" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">• ob-vsag 统一内存分配与生命周期</text>
+  <rect x="335" y="460" width="270" height="152" fill="#F0FDFA" stroke="#0D9488" stroke-width="1.5" rx="8"/>
+  <text x="470.0" y="484" font-size="12.5" font-weight="bold" fill="#0D9488" text-anchor="middle">vsag::Algorithm (索引编排)</text>
+  <text x="347" y="512" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">src/algorithm/hgraph/ &amp; ivf/</text>
+  <text x="347" y="536" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">• HGraph (HNSW 工业增强与并发)</text>
+  <text x="347" y="560" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">• Pyramid (带过滤/分层子图检索)</text>
+  <text x="347" y="584" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">• BruteForce / IVF / SINDI</text>
+  <rect x="635" y="460" width="275" height="152" fill="#FEF3C7" stroke="#D97706" stroke-width="1.5" rx="8"/>
+  <text x="772.5" y="484" font-size="12.5" font-weight="bold" fill="#D97706" text-anchor="middle">vsag::DataCell &amp; Quantizer</text>
+  <text x="647" y="512" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">src/datacell/ &amp; src/quantization/</text>
+  <text x="647" y="536" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">• FlattenDataCell (FP32/SQ8/PQ/RaBitQ)</text>
+  <text x="647" y="560" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">• GraphDataCell (连续邻接内存布局)</text>
+  <text x="647" y="584" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">• BottomQuantizer + Refine 重排</text>
+  <rect x="940" y="460" width="225" height="152" fill="#F5F3FF" stroke="#7C3AED" stroke-width="1.5" rx="8"/>
+  <text x="1052.5" y="484" font-size="12.5" font-weight="bold" fill="#7C3AED" text-anchor="middle">vsag::SIMD &amp; IO 加速</text>
+  <text x="952" y="512" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">src/simd/ &amp; src/io/</text>
+  <text x="952" y="536" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">• AVX2 / AVX-512 / ARM NEON</text>
+  <text x="952" y="560" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">• Bitwise Popcount / FHT 旋转</text>
+  <text x="952" y="584" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">• Direct I/O / 异步块读取</text>
+  <line x1="305" y1="536" x2="335" y2="536" stroke="#1E3A8A" stroke-width="2.2" marker-end="url(#arrow-navy)"/>
+  <line x1="605" y1="536" x2="635" y2="536" stroke="#1E3A8A" stroke-width="2.2" marker-end="url(#arrow-navy)"/>
+  <line x1="910" y1="536" x2="940" y2="536" stroke="#1E3A8A" stroke-width="2.2" marker-end="url(#arrow-navy)"/>
+</svg>
