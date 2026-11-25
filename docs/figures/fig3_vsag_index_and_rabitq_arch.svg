@@ -1,92 +1,465 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1220 660" width="1220" height="660" font-family="PingFang SC, Hiragino Sans GB, Arial Unicode MS, -apple-system, sans-serif">
-  <rect width="1220" height="660" fill="#FFFFFF" rx="8"/>
-  <defs>
-    <marker id="arrow-navy" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-      <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#1E3A8A"/>
-    </marker>
-    <marker id="arrow-teal" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-      <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#0D9488"/>
-    </marker>
-    <marker id="arrow-red" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-      <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#DC2626"/>
-    </marker>
-    <marker id="arrow-slate" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-      <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#475569"/>
-    </marker>
-  </defs>
-  <text x="610" y="34" font-size="19" font-weight="bold" fill="#1E3A8A" text-anchor="middle">主流 ANN 索引与量化内核原理对照及 antgroup/vsag 抽象架构</text>
-  <text x="610" y="56" font-size="12.5" font-weight="normal" fill="#475569" text-anchor="middle">从倒排乘积量化 (IVF-PQ)、多层导航图 (HNSW)、SSD 混合图 (DiskANN) 到正交 1-bit 无偏量化 (RaBitQ)</text>
-  <rect x="30" y="76" width="275" height="310" fill="#EFF6FF" stroke="#2563EB" stroke-width="1.7" rx="10"/>
-  <rect x="30" y="76" width="275" height="36" fill="#2563EB" stroke="#2563EB" stroke-width="1.0" rx="8"/>
-  <text x="167.5" y="99" font-size="12.5" font-weight="bold" fill="#FFFFFF" text-anchor="middle">1. IVF-PQ (聚类倒排 + 乘积量化)</text>
-  <text x="44" y="138" font-size="11.5" font-weight="normal" fill="#0F172A" text-anchor="start">① K-Means 划分 nlist Voronoi 桶</text>
-  <text x="44" y="171" font-size="11.5" font-weight="normal" fill="#0F172A" text-anchor="start">② 仅探查最近 nprobe 个桶 (缩小候选)</text>
-  <text x="44" y="204" font-size="11.5" font-weight="normal" fill="#0F172A" text-anchor="start">③ 残差切 M 段→码本量化为 M 字节</text>
-  <text x="44" y="237" font-size="11.5" font-weight="normal" fill="#0F172A" text-anchor="start">④ 查 M×K ADC 距离表累加 (零乘法)</text>
-  <text x="44" y="270" font-size="11.5" font-weight="normal" fill="#0F172A" text-anchor="start">⑤ Oversampling 取粗排 Top-K' 后</text>
-  <text x="44" y="303" font-size="11.5" font-weight="normal" fill="#0F172A" text-anchor="start">   回表读取 FP32 原向量 Refine 精排</text>
-  <rect x="40" y="346" width="255" height="30" fill="#FFFFFF" stroke="#2563EB" stroke-width="1.0" rx="5"/>
-  <text x="167.5" y="365" font-size="10.5" font-weight="bold" fill="#2563EB" text-anchor="middle">内存极省 (~20B) | 痛点: 低维子空间量化失真</text>
-  <rect x="325" y="76" width="275" height="310" fill="#F0FDFA" stroke="#0D9488" stroke-width="1.7" rx="10"/>
-  <rect x="325" y="76" width="275" height="36" fill="#0D9488" stroke="#0D9488" stroke-width="1.0" rx="8"/>
-  <text x="462.5" y="99" font-size="12.5" font-weight="bold" fill="#FFFFFF" text-anchor="middle">2. HNSW (分层导航小世界图)</text>
-  <text x="339" y="138" font-size="11.5" font-weight="normal" fill="#0F172A" text-anchor="start">① 指数衰减概率分配节点最高层 l</text>
-  <text x="339" y="171" font-size="11.5" font-weight="normal" fill="#0F172A" text-anchor="start">② 上层稀疏长跳边: 贪心快速逼近</text>
-  <text x="339" y="204" font-size="11.5" font-weight="normal" fill="#0F172A" text-anchor="start">③ 第 0 层稠密邻接表: 维护大小 efSearch</text>
-  <text x="339" y="237" font-size="11.5" font-weight="normal" fill="#0F172A" text-anchor="start">   的动态优先队列精细收敛</text>
-  <text x="339" y="270" font-size="11.5" font-weight="normal" fill="#0F172A" text-anchor="start">④ Algorithm 4 启发式选边保证连通</text>
-  <text x="339" y="303" font-size="11.5" font-weight="normal" fill="#0F172A" text-anchor="start">⑤ 物理删点会破坏小世界通路→软删</text>
-  <rect x="335" y="346" width="255" height="30" fill="#FFFFFF" stroke="#0D9488" stroke-width="1.0" rx="5"/>
-  <text x="462.5" y="365" font-size="10.5" font-weight="bold" fill="#0D9488" text-anchor="middle">高 Recall 高 QPS | 痛点: 图+向量 RAM &gt; 1.3x</text>
-  <rect x="620" y="76" width="275" height="310" fill="#FEF3C7" stroke="#D97706" stroke-width="1.7" rx="10"/>
-  <rect x="620" y="76" width="275" height="36" fill="#D97706" stroke="#D97706" stroke-width="1.0" rx="8"/>
-  <text x="757.5" y="99" font-size="12.5" font-weight="bold" fill="#FFFFFF" text-anchor="middle">3. DiskANN (Vamana SSD 分层)</text>
-  <text x="634" y="138" font-size="11.5" font-weight="normal" fill="#0F172A" text-anchor="start">① Vamana 单层图 + α-RNG 剪枝</text>
-  <text x="634" y="171" font-size="11.5" font-weight="normal" fill="#0F172A" text-anchor="start">   控直径更短，减少 SSD 随机跳转次数</text>
-  <text x="634" y="204" font-size="11.5" font-weight="normal" fill="#0F172A" text-anchor="start">② RAM 常驻 PQ/SQ 压缩向量 (~64B)</text>
-  <text x="634" y="237" font-size="11.5" font-weight="normal" fill="#0F172A" text-anchor="start">③ SSD 按 4KB 页将全精度向量与邻接</text>
-  <text x="634" y="270" font-size="11.5" font-weight="normal" fill="#0F172A" text-anchor="start">   表邻近打包读取 (Co-located Layout)</text>
-  <text x="634" y="303" font-size="11.5" font-weight="normal" fill="#0F172A" text-anchor="start">④ Beam Search 批量异步 io_uring 预取</text>
-  <rect x="630" y="346" width="255" height="30" fill="#FFFFFF" stroke="#D97706" stroke-width="1.0" rx="5"/>
-  <text x="757.5" y="365" font-size="10.5" font-weight="bold" fill="#D97706" text-anchor="middle">打破内存墙 (十亿级单机) | P99 受 SSD IOPS 影响</text>
-  <rect x="915" y="76" width="275" height="310" fill="#FDF2F8" stroke="#7C3AED" stroke-width="1.7" rx="10"/>
-  <rect x="915" y="76" width="275" height="36" fill="#7C3AED" stroke="#7C3AED" stroke-width="1.0" rx="8"/>
-  <text x="1052.5" y="99" font-size="12.5" font-weight="bold" fill="#FFFFFF" text-anchor="middle">4. RaBitQ (SIGMOD'24 无偏量化)</text>
-  <text x="929" y="138" font-size="11.5" font-weight="normal" fill="#0F172A" text-anchor="start">① 向量去中心化后乘随机正交矩阵 P</text>
-  <text x="929" y="171" font-size="11.5" font-weight="normal" fill="#0F172A" text-anchor="start">   均匀打散各维度能量防极端方差</text>
-  <text x="929" y="204" font-size="11.5" font-weight="normal" fill="#0F172A" text-anchor="start">② 1-bit 符号量化 {-1,+1}^D 打包位图</text>
-  <text x="929" y="237" font-size="11.5" font-weight="normal" fill="#0F172A" text-anchor="start">③ 附带 2 个 float 修正因子 (8B)</text>
-  <text x="929" y="270" font-size="11.5" font-weight="normal" fill="#0F172A" text-anchor="start">④ XNOR/AND + Popcount 算 &lt;q, x_bar&gt;</text>
-  <text x="929" y="303" font-size="11.5" font-weight="normal" fill="#0F172A" text-anchor="start">⑤ 数学证明期望严格无偏, 误差 ∝ 1/√D</text>
-  <rect x="925" y="346" width="255" height="30" fill="#FFFFFF" stroke="#7C3AED" stroke-width="1.0" rx="5"/>
-  <text x="1052.5" y="365" font-size="10.5" font-weight="bold" fill="#7C3AED" text-anchor="middle">21x+ 极致压缩 + 理论误差界 | VSAG/Milvus 已落地</text>
-  <rect x="30" y="412" width="1160" height="224" fill="#F8FAFC" stroke="#1E3A8A" stroke-width="2.0" rx="10"/>
-  <text x="610" y="440" font-size="15" font-weight="bold" fill="#1E3A8A" text-anchor="middle">seekdb 底层向量内核：ob-vsag 适配层与 antgroup/vsag 模块解耦架构</text>
-  <rect x="55" y="460" width="250" height="152" fill="#EFF6FF" stroke="#2563EB" stroke-width="1.5" rx="8"/>
-  <text x="180.0" y="484" font-size="12.5" font-weight="bold" fill="#2563EB" text-anchor="middle">seekdb SQL / 存储层</text>
-  <text x="67" y="512" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">src/storage/vector_index/</text>
-  <text x="67" y="536" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">• CREATE VECTOR INDEX ... LIB=vsag</text>
-  <text x="67" y="560" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">• TYPE: hnsw | hnsw_sq | hnsw_bq</text>
-  <text x="67" y="584" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">• ob-vsag 统一内存分配与生命周期</text>
-  <rect x="335" y="460" width="270" height="152" fill="#F0FDFA" stroke="#0D9488" stroke-width="1.5" rx="8"/>
-  <text x="470.0" y="484" font-size="12.5" font-weight="bold" fill="#0D9488" text-anchor="middle">vsag::Algorithm (索引编排)</text>
-  <text x="347" y="512" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">src/algorithm/hgraph/ &amp; ivf/</text>
-  <text x="347" y="536" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">• HGraph (HNSW 工业增强与并发)</text>
-  <text x="347" y="560" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">• Pyramid (带过滤/分层子图检索)</text>
-  <text x="347" y="584" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">• BruteForce / IVF / SINDI</text>
-  <rect x="635" y="460" width="275" height="152" fill="#FEF3C7" stroke="#D97706" stroke-width="1.5" rx="8"/>
-  <text x="772.5" y="484" font-size="12.5" font-weight="bold" fill="#D97706" text-anchor="middle">vsag::DataCell &amp; Quantizer</text>
-  <text x="647" y="512" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">src/datacell/ &amp; src/quantization/</text>
-  <text x="647" y="536" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">• FlattenDataCell (FP32/SQ8/PQ/RaBitQ)</text>
-  <text x="647" y="560" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">• GraphDataCell (连续邻接内存布局)</text>
-  <text x="647" y="584" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">• BottomQuantizer + Refine 重排</text>
-  <rect x="940" y="460" width="225" height="152" fill="#F5F3FF" stroke="#7C3AED" stroke-width="1.5" rx="8"/>
-  <text x="1052.5" y="484" font-size="12.5" font-weight="bold" fill="#7C3AED" text-anchor="middle">vsag::SIMD &amp; IO 加速</text>
-  <text x="952" y="512" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">src/simd/ &amp; src/io/</text>
-  <text x="952" y="536" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">• AVX2 / AVX-512 / ARM NEON</text>
-  <text x="952" y="560" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">• Bitwise Popcount / FHT 旋转</text>
-  <text x="952" y="584" font-size="11" font-weight="normal" fill="#0F172A" text-anchor="start">• Direct I/O / 异步块读取</text>
-  <line x1="305" y1="536" x2="335" y2="536" stroke="#1E3A8A" stroke-width="2.2" marker-end="url(#arrow-navy)"/>
-  <line x1="605" y1="536" x2="635" y2="536" stroke="#1E3A8A" stroke-width="2.2" marker-end="url(#arrow-navy)"/>
-  <line x1="910" y1="536" x2="940" y2="536" stroke="#1E3A8A" stroke-width="2.2" marker-end="url(#arrow-navy)"/>
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="913.32pt" height="486.288pt" viewBox="0 0 913.32 486.288" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-11-25T12:58:48.134110</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.2, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <rect width="100%" height="100%" fill="#FFFFFF"/>
+<g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 486.288 
+L 913.32 486.288 
+L 913.32 -0 
+L 0 -0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 38.964984 286.5384 
+L 227.578131 286.5384 
+Q 234.804689 286.5384 234.804689 279.6504 
+L 234.804689 75.7656 
+Q 234.804689 68.8776 227.578131 68.8776 
+L 38.964984 68.8776 
+Q 31.738426 68.8776 31.738426 75.7656 
+L 31.738426 279.6504 
+Q 31.738426 286.5384 38.964984 286.5384 
+z
+" clip-path="url(#p8275b18bb2)" style="fill: #eff6ff; stroke: #2563eb; stroke-width: 1.6; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 40.410295 99.1848 
+L 226.13282 99.1848 
+Q 231.914066 99.1848 231.914066 93.6744 
+L 231.914066 77.1432 
+Q 231.914066 71.6328 226.13282 71.6328 
+L 40.410295 71.6328 
+Q 34.629049 71.6328 34.629049 77.1432 
+L 34.629049 93.6744 
+Q 34.629049 99.1848 40.410295 99.1848 
+z
+" clip-path="url(#p8275b18bb2)" style="fill: #2563eb; stroke: #2563eb; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 43.662246 278.6172 
+L 222.880869 278.6172 
+Q 226.494148 278.6172 226.494148 275.1732 
+L 226.494148 258.642 
+Q 226.494148 255.198 222.880869 255.198 
+L 43.662246 255.198 
+Q 40.048967 255.198 40.048967 258.642 
+L 40.048967 275.1732 
+Q 40.048967 278.6172 43.662246 278.6172 
+z
+" clip-path="url(#p8275b18bb2)" style="fill: #ffffff; stroke: #2563eb; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 252.148426 286.5384 
+L 440.761574 286.5384 
+Q 447.988131 286.5384 447.988131 279.6504 
+L 447.988131 75.7656 
+Q 447.988131 68.8776 440.761574 68.8776 
+L 252.148426 68.8776 
+Q 244.921869 68.8776 244.921869 75.7656 
+L 244.921869 279.6504 
+Q 244.921869 286.5384 252.148426 286.5384 
+z
+" clip-path="url(#p8275b18bb2)" style="fill: #f0fdfa; stroke: #0d9488; stroke-width: 1.6; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 253.593738 99.1848 
+L 439.316262 99.1848 
+Q 445.097508 99.1848 445.097508 93.6744 
+L 445.097508 77.1432 
+Q 445.097508 71.6328 439.316262 71.6328 
+L 253.593738 71.6328 
+Q 247.812492 71.6328 247.812492 77.1432 
+L 247.812492 93.6744 
+Q 247.812492 99.1848 253.593738 99.1848 
+z
+" clip-path="url(#p8275b18bb2)" style="fill: #0d9488; stroke: #0d9488; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_7">
+    <path d="M 256.845689 278.6172 
+L 436.064311 278.6172 
+Q 439.67759 278.6172 439.67759 275.1732 
+L 439.67759 258.642 
+Q 439.67759 255.198 436.064311 255.198 
+L 256.845689 255.198 
+Q 253.23241 255.198 253.23241 258.642 
+L 253.23241 275.1732 
+Q 253.23241 278.6172 256.845689 278.6172 
+z
+" clip-path="url(#p8275b18bb2)" style="fill: #ffffff; stroke: #0d9488; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_8">
+    <path d="M 465.331869 286.5384 
+L 653.945016 286.5384 
+Q 661.171574 286.5384 661.171574 279.6504 
+L 661.171574 75.7656 
+Q 661.171574 68.8776 653.945016 68.8776 
+L 465.331869 68.8776 
+Q 458.105311 68.8776 458.105311 75.7656 
+L 458.105311 279.6504 
+Q 458.105311 286.5384 465.331869 286.5384 
+z
+" clip-path="url(#p8275b18bb2)" style="fill: #fef3c7; stroke: #d97706; stroke-width: 1.6; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_9">
+    <path d="M 466.77718 99.1848 
+L 652.499705 99.1848 
+Q 658.280951 99.1848 658.280951 93.6744 
+L 658.280951 77.1432 
+Q 658.280951 71.6328 652.499705 71.6328 
+L 466.77718 71.6328 
+Q 460.995934 71.6328 460.995934 77.1432 
+L 460.995934 93.6744 
+Q 460.995934 99.1848 466.77718 99.1848 
+z
+" clip-path="url(#p8275b18bb2)" style="fill: #d97706; stroke: #d97706; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_10">
+    <path d="M 470.029131 278.6172 
+L 649.247754 278.6172 
+Q 652.861033 278.6172 652.861033 275.1732 
+L 652.861033 258.642 
+Q 652.861033 255.198 649.247754 255.198 
+L 470.029131 255.198 
+Q 466.415852 255.198 466.415852 258.642 
+L 466.415852 275.1732 
+Q 466.415852 278.6172 470.029131 278.6172 
+z
+" clip-path="url(#p8275b18bb2)" style="fill: #ffffff; stroke: #d97706; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_11">
+    <path d="M 678.515311 286.5384 
+L 874.355016 286.5384 
+Q 881.581574 286.5384 881.581574 279.6504 
+L 881.581574 75.7656 
+Q 881.581574 68.8776 874.355016 68.8776 
+L 678.515311 68.8776 
+Q 671.288754 68.8776 671.288754 75.7656 
+L 671.288754 279.6504 
+Q 671.288754 286.5384 678.515311 286.5384 
+z
+" clip-path="url(#p8275b18bb2)" style="fill: #fdf2f8; stroke: #7c3aed; stroke-width: 1.6; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_12">
+    <path d="M 679.960623 99.1848 
+L 872.909705 99.1848 
+Q 878.690951 99.1848 878.690951 93.6744 
+L 878.690951 77.1432 
+Q 878.690951 71.6328 872.909705 71.6328 
+L 679.960623 71.6328 
+Q 674.179377 71.6328 674.179377 77.1432 
+L 674.179377 93.6744 
+Q 674.179377 99.1848 679.960623 99.1848 
+z
+" clip-path="url(#p8275b18bb2)" style="fill: #7c3aed; stroke: #7c3aed; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_13">
+    <path d="M 683.212574 278.6172 
+L 869.657754 278.6172 
+Q 873.271033 278.6172 873.271033 275.1732 
+L 873.271033 258.642 
+Q 873.271033 255.198 869.657754 255.198 
+L 683.212574 255.198 
+Q 679.599295 255.198 679.599295 258.642 
+L 679.599295 275.1732 
+Q 679.599295 278.6172 683.212574 278.6172 
+z
+" clip-path="url(#p8275b18bb2)" style="fill: #ffffff; stroke: #7c3aed; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_14">
+    <path d="M 38.964984 457.3608 
+L 874.355016 457.3608 
+Q 881.581574 457.3608 881.581574 450.4728 
+L 881.581574 308.58 
+Q 881.581574 301.692 874.355016 301.692 
+L 38.964984 301.692 
+Q 31.738426 301.692 31.738426 308.58 
+L 31.738426 450.4728 
+Q 31.738426 457.3608 38.964984 457.3608 
+z
+" clip-path="url(#p8275b18bb2)" style="fill: #f8fafc; stroke: #1e3a8a; stroke-width: 1.8; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_15">
+    <path d="M 52.695443 444.2736 
+L 231.914066 444.2736 
+Q 237.695311 444.2736 237.695311 438.7632 
+L 237.695311 342.3312 
+Q 237.695311 336.8208 231.914066 336.8208 
+L 52.695443 336.8208 
+Q 46.914197 336.8208 46.914197 342.3312 
+L 46.914197 438.7632 
+Q 46.914197 444.2736 52.695443 444.2736 
+z
+" clip-path="url(#p8275b18bb2)" style="fill: #eff6ff; stroke: #2563eb; stroke-width: 1.4; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_16">
+    <path d="M 262.265607 444.2736 
+L 448.710787 444.2736 
+Q 454.492033 444.2736 454.492033 438.7632 
+L 454.492033 342.3312 
+Q 454.492033 336.8208 448.710787 336.8208 
+L 262.265607 336.8208 
+Q 256.484361 336.8208 256.484361 342.3312 
+L 256.484361 438.7632 
+Q 256.484361 444.2736 262.265607 444.2736 
+z
+" clip-path="url(#p8275b18bb2)" style="fill: #f0fdfa; stroke: #0d9488; stroke-width: 1.4; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_17">
+    <path d="M 479.062328 444.2736 
+L 672.734066 444.2736 
+Q 678.515311 444.2736 678.515311 438.7632 
+L 678.515311 342.3312 
+Q 678.515311 336.8208 672.734066 336.8208 
+L 479.062328 336.8208 
+Q 473.281082 336.8208 473.281082 342.3312 
+L 473.281082 438.7632 
+Q 473.281082 444.2736 479.062328 444.2736 
+z
+" clip-path="url(#p8275b18bb2)" style="fill: #fef3c7; stroke: #d97706; stroke-width: 1.4; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_18">
+    <path d="M 703.085607 444.2736 
+L 860.624557 444.2736 
+Q 866.405803 444.2736 866.405803 438.7632 
+L 866.405803 342.3312 
+Q 866.405803 336.8208 860.624557 336.8208 
+L 703.085607 336.8208 
+Q 697.304361 336.8208 697.304361 342.3312 
+L 697.304361 438.7632 
+Q 697.304361 444.2736 703.085607 444.2736 
+z
+" clip-path="url(#p8275b18bb2)" style="fill: #f5f3ff; stroke: #7c3aed; stroke-width: 1.4; stroke-linejoin: miter"/>
+   </g>
+   <g id="text_1">
+    <text style="font-weight: 700; font-size: 17px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #1e3a8a" x="456.66" y="40.634134" transform="rotate(-0 456.66 40.634134)">主流 ANN 索引与量化原理对照及 antgroup/vsag 内核分层</text>
+   </g>
+   <g id="text_2">
+    <text style="font-size: 10.8px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #475569" x="456.66" y="58.3008" transform="rotate(-0 456.66 58.3008)">倒排乘积量化 (IVF-PQ)、多层导航图 (HNSW)、SSD 混合图 (DiskANN) 与正交 1-bit 无偏量化 (RaBitQ)</text>
+   </g>
+   <g id="text_3">
+    <text style="font-weight: 700; font-size: 10.8px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #ffffff" x="133.271557" y="89.2968" transform="rotate(-0 133.271557 89.2968)">1. IVF-PQ (分桶 + 乘积量化)</text>
+   </g>
+   <g id="text_4">
+    <text style="font-size: 9.4px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #0f172a" x="42.578262" y="119.7888" transform="rotate(-0 42.578262 119.7888)">① K-Means 划分 nlist 个 Voronoi 桶</text>
+   </g>
+   <g id="text_5">
+    <text style="font-size: 9.4px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #0f172a" x="42.578262" y="140.869147" transform="rotate(-0 42.578262 140.869147)">② 仅探查最近 nprobe 个桶缩小范围</text>
+   </g>
+   <g id="text_6">
+    <text style="font-size: 9.4px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #0f172a" x="42.578262" y="162.4944" transform="rotate(-0 42.578262 162.4944)">③ 残差切 M 段→码本编码为 M 字节</text>
+   </g>
+   <g id="text_7">
+    <text style="font-size: 9.4px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #0f172a" x="42.578262" y="183.8472" transform="rotate(-0 42.578262 183.8472)">④ 查 M×K ADC 距离表累加 (零乘法)</text>
+   </g>
+   <g id="text_8">
+    <text style="font-size: 9.4px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #0f172a" x="42.578262" y="204.927547" transform="rotate(-0 42.578262 204.927547)">⑤ 粗排取 Top-K' 后回读原向量</text>
+   </g>
+   <g id="text_9">
+    <text style="font-size: 9.4px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #0f172a" x="42.578262" y="226.5528" transform="rotate(-0 42.578262 226.5528)">   执行 FP32 Refine 精排补齐召回</text>
+   </g>
+   <g id="text_10">
+    <text style="font-weight: 700; font-size: 8.6px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #2563eb" x="133.271557" y="270.0036" transform="rotate(-0 133.271557 270.0036)">内存省 (~20B) | 局限: 粗排量化失真需 Refine</text>
+   </g>
+   <g id="text_11">
+    <text style="font-weight: 700; font-size: 10.8px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #ffffff" x="346.455" y="89.2968" transform="rotate(-0 346.455 89.2968)">2. HNSW (分层导航小世界图)</text>
+   </g>
+   <g id="text_12">
+    <text style="font-size: 9.4px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #0f172a" x="255.761705" y="119.7888" transform="rotate(-0 255.761705 119.7888)">① 指数衰减概率分配节点最高层 l</text>
+   </g>
+   <g id="text_13">
+    <text style="font-size: 9.4px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #0f172a" x="255.761705" y="141.1416" transform="rotate(-0 255.761705 141.1416)">② 上层稀疏长跳边做贪心快速定位</text>
+   </g>
+   <g id="text_14">
+    <text style="font-size: 9.4px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #0f172a" x="255.761705" y="162.4944" transform="rotate(-0 255.761705 162.4944)">③ 第 0 层维护容量 efSearch 优先队列</text>
+   </g>
+   <g id="text_15">
+    <text style="font-size: 9.4px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #0f172a" x="255.761705" y="183.508653" transform="rotate(-0 255.761705 183.508653)">④ Algorithm 4 启发式选边保留角度</text>
+   </g>
+   <g id="text_16">
+    <text style="font-size: 9.4px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #0f172a" x="255.761705" y="205.101594" transform="rotate(-0 255.761705 205.101594)">   多样性，避免图局部退化</text>
+   </g>
+   <g id="text_17">
+    <text style="font-size: 9.4px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #0f172a" x="255.761705" y="226.5528" transform="rotate(-0 255.761705 226.5528)">⑤ 物理删点易断连→改用软删位图</text>
+   </g>
+   <g id="text_18">
+    <text style="font-weight: 700; font-size: 8.6px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #0d9488" x="346.455" y="270.0036" transform="rotate(-0 346.455 270.0036)">高 Recall 高 QPS | 局限: 内存占用较高</text>
+   </g>
+   <g id="text_19">
+    <text style="font-weight: 700; font-size: 10.8px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #ffffff" x="559.638443" y="89.2968" transform="rotate(-0 559.638443 89.2968)">3. DiskANN (Vamana SSD 分层)</text>
+   </g>
+   <g id="text_20">
+    <text style="font-size: 9.4px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #0f172a" x="468.945148" y="119.7888" transform="rotate(-0 468.945148 119.7888)">① 单层 Vamana 图 + α-RNG 剪枝</text>
+   </g>
+   <g id="text_21">
+    <text style="font-size: 9.4px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #0f172a" x="468.945148" y="141.1416" transform="rotate(-0 468.945148 141.1416)">   缩短图直径以减少 SSD 跳转次数</text>
+   </g>
+   <g id="text_22">
+    <text style="font-size: 9.4px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #0f172a" x="468.945148" y="162.4944" transform="rotate(-0 468.945148 162.4944)">② RAM 常驻轻量 PQ/SQ 压缩编码</text>
+   </g>
+   <g id="text_23">
+    <text style="font-size: 9.4px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #0f172a" x="468.945148" y="183.8472" transform="rotate(-0 468.945148 183.8472)">③ SSD 按 4KB 页将全精度向量与邻接</text>
+   </g>
+   <g id="text_24">
+    <text style="font-size: 9.4px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #0f172a" x="468.945148" y="205.2" transform="rotate(-0 468.945148 205.2)">   表紧邻打包读取 (Co-located)</text>
+   </g>
+   <g id="text_25">
+    <text style="font-size: 9.4px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #0f172a" x="468.945148" y="226.5528" transform="rotate(-0 468.945148 226.5528)">④ Beam Search 异步批量预取隐藏延迟</text>
+   </g>
+   <g id="text_26">
+    <text style="font-weight: 700; font-size: 8.6px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #d97706" x="559.638443" y="270.0036" transform="rotate(-0 559.638443 270.0036)">单机支撑十亿级 | 性能受 SSD IOPS 约束</text>
+   </g>
+   <g id="text_27">
+    <text style="font-weight: 700; font-size: 10.8px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #ffffff" x="776.435164" y="89.2968" transform="rotate(-0 776.435164 89.2968)">4. RaBitQ (SIGMOD'24 无偏量化)</text>
+   </g>
+   <g id="text_28">
+    <text style="font-size: 9.4px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #0f172a" x="682.12859" y="119.7888" transform="rotate(-0 682.12859 119.7888)">① 去中心化后乘随机正交矩阵 P/FHT</text>
+   </g>
+   <g id="text_29">
+    <text style="font-size: 9.4px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #0f172a" x="682.12859" y="141.043194" transform="rotate(-0 682.12859 141.043194)">   打散各维方差，避免坐标偏置</text>
+   </g>
+   <g id="text_30">
+    <text style="font-size: 9.4px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #0f172a" x="682.12859" y="162.395994" transform="rotate(-0 682.12859 162.395994)">② 1-bit 符号量化 {-1,+1}^D 打包位图</text>
+   </g>
+   <g id="text_31">
+    <text style="font-size: 9.4px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #0f172a" x="682.12859" y="183.8472" transform="rotate(-0 682.12859 183.8472)">③ 附带 2 个 float 修正因子 (共 8B)</text>
+   </g>
+   <g id="text_32">
+    <text style="font-size: 9.4px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #0f172a" x="682.12859" y="204.927547" transform="rotate(-0 682.12859 204.927547)">④ 位与/异或 + Popcount 快速估计内积</text>
+   </g>
+   <g id="text_33">
+    <text style="font-size: 9.4px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #0f172a" x="682.12859" y="226.454394" transform="rotate(-0 682.12859 226.454394)">⑤ 理论期望无偏，误差界按 1/√D 收敛</text>
+   </g>
+   <g id="text_34">
+    <text style="font-weight: 700; font-size: 8.6px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #7c3aed" x="776.435164" y="270.0036" transform="rotate(-0 776.435164 270.0036)">21x+ 高压缩 + 理论误差界 | VSAG 已集成</text>
+   </g>
+   <g id="text_35">
+    <text style="font-weight: 700; font-size: 12.8px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #1e3a8a" x="456.66" y="324.4366" transform="rotate(-0 456.66 324.4366)">seekdb 底层向量模块：ob-vsag 适配层与 antgroup/vsag 核心组件对应关系</text>
+   </g>
+   <g id="text_36">
+    <text style="font-weight: 700; font-size: 10.5px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #2563eb" x="142.304754" y="356.4432" transform="rotate(-0 142.304754 356.4432)">seekdb SQL / 存储映射</text>
+   </g>
+   <g id="text_37">
+    <text style="font-size: 8.8px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #0f172a" x="56.308721" y="374.800662" transform="rotate(-0 56.308721 374.800662)">src/storage/vector_index/</text>
+   </g>
+   <g id="text_38">
+    <text style="font-size: 8.8px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #0f172a" x="56.308721" y="390.987462" transform="rotate(-0 56.308721 390.987462)">• VECTOR INDEX ... LIB=vsag</text>
+   </g>
+   <g id="text_39">
+    <text style="font-size: 8.8px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #0f172a" x="56.308721" y="407.236137" transform="rotate(-0 56.308721 407.236137)">• TYPE: hnsw | hnsw_sq | hnsw_bq</text>
+   </g>
+   <g id="text_40">
+    <text style="font-size: 8.8px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #0f172a" x="56.308721" y="423.678" transform="rotate(-0 56.308721 423.678)">• 物理辅助表: _index_id_table /</text>
+   </g>
+   <g id="text_41">
+    <text style="font-size: 8.8px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #0f172a" x="56.308721" y="439.609737" transform="rotate(-0 56.308721 439.609737)">  _index_snapshot_data_table</text>
+   </g>
+   <g id="text_42">
+    <text style="font-weight: 700; font-size: 10.5px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #0d9488" x="355.488197" y="356.065036" transform="rotate(-0 355.488197 356.065036)">vsag::Algorithm (算法编排)</text>
+   </g>
+   <g id="text_43">
+    <text style="font-size: 8.8px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #0f172a" x="265.878885" y="374.800662" transform="rotate(-0 265.878885 374.800662)">src/algorithm/hgraph/ &amp; ivf/</text>
+   </g>
+   <g id="text_44">
+    <text style="font-size: 8.8px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #0f172a" x="265.878885" y="391.049337" transform="rotate(-0 265.878885 391.049337)">• HGraph (HNSW 并发与扩展)</text>
+   </g>
+   <g id="text_45">
+    <text style="font-size: 8.8px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #0f172a" x="265.878885" y="407.236137" transform="rotate(-0 265.878885 407.236137)">• Pyramid (带过滤分层图)</text>
+   </g>
+   <g id="text_46">
+    <text style="font-size: 8.8px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #0f172a" x="265.878885" y="423.678" transform="rotate(-0 265.878885 423.678)">• BruteForce / IVF / SINDI</text>
+   </g>
+   <g id="text_47">
+    <text style="font-size: 8.8px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #0f172a" x="265.878885" y="439.8648" transform="rotate(-0 265.878885 439.8648)">• BottomQuantizer 精排调度</text>
+   </g>
+   <g id="text_48">
+    <text style="font-weight: 700; font-size: 10.5px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #d97706" x="575.898197" y="356.065036" transform="rotate(-0 575.898197 356.065036)">vsag::DataCell &amp; Quantizer</text>
+   </g>
+   <g id="text_49">
+    <text style="font-size: 8.8px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #0f172a" x="482.675607" y="374.862537" transform="rotate(-0 482.675607 374.862537)">src/datacell/ &amp; src/quantization/</text>
+   </g>
+   <g id="text_50">
+    <text style="font-size: 8.8px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #0f172a" x="482.675607" y="391.3044" transform="rotate(-0 482.675607 391.3044)">• FlattenDataCell (FP32/SQ8/PQ/RaBitQ)</text>
+   </g>
+   <g id="text_51">
+    <text style="font-size: 8.8px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #0f172a" x="482.675607" y="407.236137" transform="rotate(-0 482.675607 407.236137)">• GraphDataCell (连续邻接布局)</text>
+   </g>
+   <g id="text_52">
+    <text style="font-size: 8.8px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #0f172a" x="482.675607" y="423.422937" transform="rotate(-0 482.675607 423.422937)">• rabitq_quantization / caq / saq</text>
+   </g>
+   <g id="text_53">
+    <text style="font-size: 8.8px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #0f172a" x="482.675607" y="439.609737" transform="rotate(-0 482.675607 439.609737)">• bq_use_fht + refine_k 控制</text>
+   </g>
+   <g id="text_54">
+    <text style="font-weight: 700; font-size: 10.5px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #7c3aed" x="781.855082" y="356.065036" transform="rotate(-0 781.855082 356.065036)">vsag::SIMD &amp; IO 加速</text>
+   </g>
+   <g id="text_55">
+    <text style="font-size: 8.8px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #0f172a" x="706.698885" y="375.1176" transform="rotate(-0 706.698885 375.1176)">src/simd/ &amp; src/io/</text>
+   </g>
+   <g id="text_56">
+    <text style="font-size: 8.8px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #0f172a" x="706.698885" y="391.3044" transform="rotate(-0 706.698885 391.3044)">• AVX2 / AVX-512 / NEON</text>
+   </g>
+   <g id="text_57">
+    <text style="font-size: 8.8px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #0f172a" x="706.698885" y="407.236137" transform="rotate(-0 706.698885 407.236137)">• Popcount / FHT 变换算子</text>
+   </g>
+   <g id="text_58">
+    <text style="font-size: 8.8px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #0f172a" x="706.698885" y="423.422937" transform="rotate(-0 706.698885 423.422937)">• 预取流水线 (__builtin_prefetch)</text>
+   </g>
+   <g id="text_59">
+    <text style="font-size: 8.8px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #0f172a" x="706.698885" y="439.8648" transform="rotate(-0 706.698885 439.8648)">• Direct I/O / 异步块读</text>
+   </g>
+   <g id="patch_19">
+    <path d="M 239.690731 390.5472 
+Q 247.089194 390.5472 252.251589 390.5472 
+" style="fill: none; stroke: #1e3a8a; stroke-width: 2; stroke-linecap: round"/>
+    <path d="M 248.251589 388.5472 
+L 252.251589 390.5472 
+L 248.251589 392.5472 
+" style="fill: none; stroke: #1e3a8a; stroke-width: 2; stroke-linecap: round"/>
+   </g>
+   <g id="patch_20">
+    <path d="M 456.487452 390.5472 
+Q 463.885915 390.5472 469.04831 390.5472 
+" style="fill: none; stroke: #1e3a8a; stroke-width: 2; stroke-linecap: round"/>
+    <path d="M 465.04831 388.5472 
+L 469.04831 390.5472 
+L 465.04831 392.5472 
+" style="fill: none; stroke: #1e3a8a; stroke-width: 2; stroke-linecap: round"/>
+   </g>
+   <g id="patch_21">
+    <path d="M 680.510731 390.5472 
+Q 687.909194 390.5472 693.071589 390.5472 
+" style="fill: none; stroke: #1e3a8a; stroke-width: 2; stroke-linecap: round"/>
+    <path d="M 689.071589 388.5472 
+L 693.071589 390.5472 
+L 689.071589 392.5472 
+" style="fill: none; stroke: #1e3a8a; stroke-width: 2; stroke-linecap: round"/>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p8275b18bb2">
+   <rect x="15.84" y="15.84" width="881.64" height="454.608"/>
+  </clipPath>
+ </defs>
 </svg>

@@ -6,7 +6,7 @@
   <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
    <cc:Work>
     <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
-    <dc:date>2026-11-25T10:56:23.124369</dc:date>
+    <dc:date>2026-11-25T12:58:49.206887</dc:date>
     <dc:format>image/svg+xml</dc:format>
     <dc:creator>
      <cc:Agent>
@@ -36,7 +36,7 @@ L 907.438125 102.184315
 L 907.438125 65.521241 
 L 64.160625 65.521241 
 z
-" clip-path="url(#p7f9fd91759)" style="fill: #fef2f2; stroke: #dc2626; stroke-width: 1.2; stroke-linejoin: miter"/>
+" clip-path="url(#p207e3cc718)" style="fill: #fef2f2; stroke: #dc2626; stroke-width: 1.2; stroke-linejoin: miter"/>
    </g>
    <g id="patch_3">
     <path d="M 80.3775 98.11064 
@@ -44,7 +44,7 @@ L 237.140625 98.11064
 L 237.140625 81.272784 
 L 80.3775 81.272784 
 z
-" clip-path="url(#p7f9fd91759)" style="fill: #ffffff; stroke: #dc2626; stroke-linejoin: miter"/>
+" clip-path="url(#p207e3cc718)" style="fill: #ffffff; stroke: #dc2626; stroke-linejoin: miter"/>
    </g>
    <g id="patch_4">
     <path d="M 280.385625 98.11064 
@@ -52,7 +52,7 @@ L 437.14875 98.11064
 L 437.14875 81.272784 
 L 280.385625 81.272784 
 z
-" clip-path="url(#p7f9fd91759)" style="fill: #ffffff; stroke: #dc2626; stroke-linejoin: miter"/>
+" clip-path="url(#p207e3cc718)" style="fill: #ffffff; stroke: #dc2626; stroke-linejoin: miter"/>
    </g>
    <g id="patch_5">
     <path d="M 491.205 98.11064 
@@ -60,7 +60,7 @@ L 647.968125 98.11064
 L 647.968125 81.272784 
 L 491.205 81.272784 
 z
-" clip-path="url(#p7f9fd91759)" style="fill: #ffffff; stroke: #dc2626; stroke-linejoin: miter"/>
+" clip-path="url(#p207e3cc718)" style="fill: #ffffff; stroke: #dc2626; stroke-linejoin: miter"/>
    </g>
    <g id="patch_6">
     <path d="M 702.024375 98.11064 
@@ -68,7 +68,7 @@ L 858.7875 98.11064
 L 858.7875 81.272784 
 L 702.024375 81.272784 
 z
-" clip-path="url(#p7f9fd91759)" style="fill: #ffffff; stroke: #dc2626; stroke-linejoin: miter"/>
+" clip-path="url(#p207e3cc718)" style="fill: #ffffff; stroke: #dc2626; stroke-linejoin: miter"/>
    </g>
    <g id="patch_7">
     <path d="M 64.160625 185.015704 
@@ -76,7 +76,7 @@ L 907.438125 185.015704
 L 907.438125 111.689557 
 L 64.160625 111.689557 
 z
-" clip-path="url(#p7f9fd91759)" style="fill: #f0fdfa; stroke: #0d9488; stroke-width: 1.4; stroke-linejoin: miter"/>
+" clip-path="url(#p207e3cc718)" style="fill: #f0fdfa; stroke: #0d9488; stroke-width: 1.4; stroke-linejoin: miter"/>
    </g>
    <g id="patch_8">
     <path d="M 80.3775 149.710522 
@@ -84,7 +84,7 @@ L 323.630625 149.710522
 L 323.630625 127.984256 
 L 80.3775 127.984256 
 z
-" clip-path="url(#p7f9fd91759)" style="fill: #ffffff; stroke: #2563eb; stroke-width: 1.2; stroke-linejoin: miter"/>
+" clip-path="url(#p207e3cc718)" style="fill: #ffffff; stroke: #2563eb; stroke-width: 1.2; stroke-linejoin: miter"/>
    </g>
    <g id="patch_9">
     <path d="M 80.3775 178.226246 
@@ -92,7 +92,7 @@ L 323.630625 178.226246
 L 323.630625 156.49998 
 L 80.3775 156.49998 
 z
-" clip-path="url(#p7f9fd91759)" style="fill: #ffffff; stroke: #1e3a8a; stroke-width: 1.2; stroke-linejoin: miter"/>
+" clip-path="url(#p207e3cc718)" style="fill: #ffffff; stroke: #1e3a8a; stroke-width: 1.2; stroke-linejoin: miter"/>
    </g>
    <g id="patch_10">
     <path d="M 377.686875 168.721005 
@@ -100,7 +100,7 @@ L 615.534375 168.721005
 L 615.534375 137.489498 
 L 377.686875 137.489498 
 z
-" clip-path="url(#p7f9fd91759)" style="fill: #eff6ff; stroke: #1e3a8a; stroke-width: 1.3; stroke-linejoin: miter"/>
+" clip-path="url(#p207e3cc718)" style="fill: #eff6ff; stroke: #1e3a8a; stroke-width: 1.3; stroke-linejoin: miter"/>
    </g>
    <g id="patch_11">
     <path d="M 669.590625 168.721005 
@@ -108,10 +108,10 @@ L 885.815625 168.721005
 L 885.815625 137.489498 
 L 669.590625 137.489498 
 z
-" clip-path="url(#p7f9fd91759)" style="fill: #f5f3ff; stroke: #7c3aed; stroke-width: 1.3; stroke-linejoin: miter"/>
+" clip-path="url(#p207e3cc718)" style="fill: #f5f3ff; stroke: #7c3aed; stroke-width: 1.3; stroke-linejoin: miter"/>
    </g>
    <g id="text_1">
-    <text style="font-weight: 700; font-size: 9.3px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #dc2626" x="77.674688" y="76.384374" transform="rotate(-0 77.674688 76.384374)">传统拼装栈（Frankenstein Stack）：跨网三次 RPC + 应用层内存对齐，存在跨库脏读与权限漂移</text>
+    <text style="font-weight: 700; font-size: 9.3px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #dc2626" x="77.674688" y="76.384374" transform="rotate(-0 77.674688 76.384374)">多库拼装方案：跨网三次 RPC + 应用层内存对齐，存在异步同步延迟与跨库状态不一致</text>
    </g>
    <g id="text_2">
     <text style="font-weight: 700; font-size: 8.3px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; fill: #0f172a" transform="translate(144.454531 86.629142)">MySQL</text>
@@ -126,8 +126,8 @@ z
     <text style="font-weight: 700; font-size: 8.3px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; fill: #0f172a" transform="translate(547.156461 98.489712)">HNSW 向量</text>
    </g>
    <g id="text_5">
-    <text style="font-weight: 700; font-size: 8.3px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; fill: #0f172a" transform="translate(751.355937 86.869712)">业务层胶水拼接</text>
-    <text style="font-weight: 700; font-size: 8.3px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; fill: #0f172a" transform="translate(748.592297 98.489712)">(分数对齐易失真)</text>
+    <text style="font-weight: 700; font-size: 8.3px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; fill: #0f172a" transform="translate(751.355937 86.869712)">业务层手动拼接</text>
+    <text style="font-weight: 700; font-size: 8.3px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; fill: #0f172a" transform="translate(748.592297 98.489712)">(分数量纲不对齐)</text>
    </g>
    <g id="patch_12">
     <path d="M 239.1387 89.691712 
@@ -157,7 +157,7 @@ L 683.534652 91.691712
 " style="fill: none; stroke: #dc2626; stroke-width: 1.5; stroke-linecap: round"/>
    </g>
    <g id="text_6">
-    <text style="font-weight: 700; font-size: 9.5px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #0d9488" x="77.674688" y="121.194798" transform="rotate(-0 77.674688 121.194798)">seekdb 单引擎同一 MVCC 快照执行：DBMS_HYBRID_SEARCH 内部编译为单条 FULL OUTER JOIN + RRF SQL</text>
+    <text style="font-weight: 700; font-size: 9.5px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #0d9488" x="77.674688" y="121.194798" transform="rotate(-0 77.674688 121.194798)">seekdb 单引擎同一 MVCC 快照执行：DBMS_HYBRID_SEARCH 内部编译为 FULL JOIN + RRF SQL</text>
    </g>
    <g id="text_7">
     <text style="font-weight: 700; font-size: 8.2px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; fill: #2563eb" transform="translate(121.328234 135.821717)">_fts 分支: FULLTEXT MATCH() + 标量下推</text>
@@ -172,8 +172,8 @@ L 683.534652 91.691712
     <text style="font-weight: 700; font-size: 8.4px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; fill: #1e3a8a" transform="translate(410.906344 162.388509)">库内 RRF: 1/(rank_fts+60) + 1/(rank_vs+60)</text>
    </g>
    <g id="text_10">
-    <text style="font-weight: 700; font-size: 8.4px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; fill: #7c3aed" transform="translate(719.38875 150.141572)">AI_RERANK (Cross-Encoder)</text>
-    <text style="font-weight: 700; font-size: 8.4px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; fill: #7c3aed" transform="translate(719.734594 161.901572)">仅对 Top-K 有限候选精排输出</text>
+    <text style="font-weight: 700; font-size: 8.4px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; fill: #7c3aed" transform="translate(719.38875 150.38504)">AI_RERANK (Cross-Encoder)</text>
+    <text style="font-weight: 700; font-size: 8.4px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; fill: #7c3aed" transform="translate(724.606594 162.14504)">对 RRF 粗召回有限候选精排</text>
    </g>
    <g id="patch_15">
     <path d="M 325.606925 139.145257 
@@ -203,7 +203,7 @@ L 661.57977 155.24104
 " style="fill: none; stroke: #7c3aed; stroke-width: 1.8; stroke-linecap: round"/>
    </g>
    <g id="text_11">
-    <text style="font-weight: 700; font-size: 11.8px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #0f172a" x="485.799375" y="50.016" transform="rotate(-0 485.799375 50.016)">A. 传统跨库拼装栈 vs OceanBase seekdb 单引擎真实混合检索执行流（基于实测 DBMS_HYBRID_SEARCH.GET_SQL）</text>
+    <text style="font-weight: 700; font-size: 11.6px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #0f172a" x="485.799375" y="50.016" transform="rotate(-0 485.799375 50.016)">A. 多库拼装方案 vs seekdb 单引擎混合检索执行流（基于 DBMS_HYBRID_SEARCH.GET_SQL 展开 SQL）</text>
    </g>
   </g>
   <g id="axes_2">
@@ -221,7 +221,7 @@ L 124.947057 404.208
 L 124.947057 285.599179 
 L 92.663011 285.599179 
 z
-" clip-path="url(#p7dbf96852b)" style="fill: #2563eb; stroke: #0f172a; stroke-width: 0.6; stroke-linejoin: miter"/>
+" clip-path="url(#p633ca14d43)" style="fill: #2563eb; stroke: #0f172a; stroke-width: 0.6; stroke-linejoin: miter"/>
    </g>
    <g id="patch_20">
     <path d="M 300.947178 404.208 
@@ -229,7 +229,7 @@ L 333.231223 404.208
 L 333.231223 398.728788 
 L 300.947178 398.728788 
 z
-" clip-path="url(#p7dbf96852b)" style="fill: #2563eb; stroke: #0f172a; stroke-width: 0.6; stroke-linejoin: miter"/>
+" clip-path="url(#p633ca14d43)" style="fill: #2563eb; stroke: #0f172a; stroke-width: 0.6; stroke-linejoin: miter"/>
    </g>
    <g id="patch_21">
     <path d="M 509.231344 404.208 
@@ -237,7 +237,7 @@ L 541.515389 404.208
 L 541.515389 396.794949 
 L 509.231344 396.794949 
 z
-" clip-path="url(#p7dbf96852b)" style="fill: #2563eb; stroke: #0f172a; stroke-width: 0.6; stroke-linejoin: miter"/>
+" clip-path="url(#p633ca14d43)" style="fill: #2563eb; stroke: #0f172a; stroke-width: 0.6; stroke-linejoin: miter"/>
    </g>
    <g id="patch_22">
     <path d="M 717.51551 404.208 
@@ -245,7 +245,7 @@ L 749.799556 404.208
 L 749.799556 360.374305 
 L 717.51551 360.374305 
 z
-" clip-path="url(#p7dbf96852b)" style="fill: #2563eb; stroke: #0f172a; stroke-width: 0.6; stroke-linejoin: miter"/>
+" clip-path="url(#p633ca14d43)" style="fill: #2563eb; stroke: #0f172a; stroke-width: 0.6; stroke-linejoin: miter"/>
    </g>
    <g id="patch_23">
     <path d="M 124.947057 404.208 
@@ -253,7 +253,7 @@ L 157.231103 404.208
 L 157.231103 402.596467 
 L 124.947057 402.596467 
 z
-" clip-path="url(#p7dbf96852b)" style="fill: #d97706; stroke: #0f172a; stroke-width: 0.6; stroke-linejoin: miter"/>
+" clip-path="url(#p633ca14d43)" style="fill: #d97706; stroke: #0f172a; stroke-width: 0.6; stroke-linejoin: miter"/>
    </g>
    <g id="patch_24">
     <path d="M 333.231223 404.208 
@@ -261,7 +261,7 @@ L 365.515269 404.208
 L 365.515269 383.258072 
 L 333.231223 383.258072 
 z
-" clip-path="url(#p7dbf96852b)" style="fill: #d97706; stroke: #0f172a; stroke-width: 0.6; stroke-linejoin: miter"/>
+" clip-path="url(#p633ca14d43)" style="fill: #d97706; stroke: #0f172a; stroke-width: 0.6; stroke-linejoin: miter"/>
    </g>
    <g id="patch_25">
     <path d="M 541.515389 404.208 
@@ -269,7 +269,7 @@ L 573.799435 404.208
 L 573.799435 364.886598 
 L 541.515389 364.886598 
 z
-" clip-path="url(#p7dbf96852b)" style="fill: #d97706; stroke: #0f172a; stroke-width: 0.6; stroke-linejoin: miter"/>
+" clip-path="url(#p633ca14d43)" style="fill: #d97706; stroke: #0f172a; stroke-width: 0.6; stroke-linejoin: miter"/>
    </g>
    <g id="patch_26">
     <path d="M 749.799556 404.208 
@@ -277,7 +277,7 @@ L 782.083601 404.208
 L 782.083601 383.580379 
 L 749.799556 383.580379 
 z
-" clip-path="url(#p7dbf96852b)" style="fill: #d97706; stroke: #0f172a; stroke-width: 0.6; stroke-linejoin: miter"/>
+" clip-path="url(#p633ca14d43)" style="fill: #d97706; stroke: #0f172a; stroke-width: 0.6; stroke-linejoin: miter"/>
    </g>
    <g id="patch_27">
     <path d="M 157.231103 404.208 
@@ -285,7 +285,7 @@ L 189.515149 404.208
 L 189.515149 335.556699 
 L 157.231103 335.556699 
 z
-" clip-path="url(#p7dbf96852b)" style="fill: #475569; stroke: #0f172a; stroke-width: 0.6; stroke-linejoin: miter"/>
+" clip-path="url(#p633ca14d43)" style="fill: #475569; stroke: #0f172a; stroke-width: 0.6; stroke-linejoin: miter"/>
    </g>
    <g id="patch_28">
     <path d="M 365.515269 404.208 
@@ -293,7 +293,7 @@ L 397.799315 404.208
 L 397.799315 375.522715 
 L 365.515269 375.522715 
 z
-" clip-path="url(#p7dbf96852b)" style="fill: #475569; stroke: #0f172a; stroke-width: 0.6; stroke-linejoin: miter"/>
+" clip-path="url(#p633ca14d43)" style="fill: #475569; stroke: #0f172a; stroke-width: 0.6; stroke-linejoin: miter"/>
    </g>
    <g id="patch_29">
     <path d="M 573.799435 404.208 
@@ -301,7 +301,7 @@ L 606.083481 404.208
 L 606.083481 364.886598 
 L 573.799435 364.886598 
 z
-" clip-path="url(#p7dbf96852b)" style="fill: #475569; stroke: #0f172a; stroke-width: 0.6; stroke-linejoin: miter"/>
+" clip-path="url(#p633ca14d43)" style="fill: #475569; stroke: #0f172a; stroke-width: 0.6; stroke-linejoin: miter"/>
    </g>
    <g id="patch_30">
     <path d="M 782.083601 404.208 
@@ -309,7 +309,7 @@ L 814.367647 404.208
 L 814.367647 358.649965 
 L 782.083601 358.649965 
 z
-" clip-path="url(#p7dbf96852b)" style="fill: #475569; stroke: #0f172a; stroke-width: 0.6; stroke-linejoin: miter"/>
+" clip-path="url(#p633ca14d43)" style="fill: #475569; stroke: #0f172a; stroke-width: 0.6; stroke-linejoin: miter"/>
    </g>
    <g id="patch_31">
     <path d="M 189.515149 404.208 
@@ -317,7 +317,7 @@ L 221.799194 404.208
 L 221.799194 356.506626 
 L 189.515149 356.506626 
 z
-" clip-path="url(#p7dbf96852b)" style="fill: #0d9488; stroke: #0f172a; stroke-width: 0.6; stroke-linejoin: miter"/>
+" clip-path="url(#p633ca14d43)" style="fill: #0d9488; stroke: #0f172a; stroke-width: 0.6; stroke-linejoin: miter"/>
    </g>
    <g id="patch_32">
     <path d="M 397.799315 404.208 
@@ -325,7 +325,7 @@ L 430.083361 404.208
 L 430.083361 364.886598 
 L 397.799315 364.886598 
 z
-" clip-path="url(#p7dbf96852b)" style="fill: #0d9488; stroke: #0f172a; stroke-width: 0.6; stroke-linejoin: miter"/>
+" clip-path="url(#p633ca14d43)" style="fill: #0d9488; stroke: #0f172a; stroke-width: 0.6; stroke-linejoin: miter"/>
    </g>
    <g id="patch_33">
     <path d="M 606.083481 404.208 
@@ -333,7 +333,7 @@ L 638.367527 404.208
 L 638.367527 382.291153 
 L 606.083481 382.291153 
 z
-" clip-path="url(#p7dbf96852b)" style="fill: #0d9488; stroke: #0f172a; stroke-width: 0.6; stroke-linejoin: miter"/>
+" clip-path="url(#p633ca14d43)" style="fill: #0d9488; stroke: #0f172a; stroke-width: 0.6; stroke-linejoin: miter"/>
    </g>
    <g id="patch_34">
     <path d="M 814.367647 404.208 
@@ -341,7 +341,7 @@ L 846.651693 404.208
 L 846.651693 367.900164 
 L 814.367647 367.900164 
 z
-" clip-path="url(#p7dbf96852b)" style="fill: #0d9488; stroke: #0f172a; stroke-width: 0.6; stroke-linejoin: miter"/>
+" clip-path="url(#p633ca14d43)" style="fill: #0d9488; stroke: #0f172a; stroke-width: 0.6; stroke-linejoin: miter"/>
    </g>
    <g id="patch_35">
     <path d="M 221.799194 404.208 
@@ -349,7 +349,7 @@ L 254.08324 404.208
 L 254.08324 265.616172 
 L 221.799194 265.616172 
 z
-" clip-path="url(#p7dbf96852b)" style="fill: #1e3a8a; stroke: #0f172a; stroke-width: 0.6; stroke-linejoin: miter"/>
+" clip-path="url(#p633ca14d43)" style="fill: #1e3a8a; stroke: #0f172a; stroke-width: 0.6; stroke-linejoin: miter"/>
    </g>
    <g id="patch_36">
     <path d="M 430.083361 404.208 
@@ -357,7 +357,7 @@ L 462.367406 404.208
 L 462.367406 369.721196 
 L 430.083361 369.721196 
 z
-" clip-path="url(#p7dbf96852b)" style="fill: #1e3a8a; stroke: #0f172a; stroke-width: 0.6; stroke-linejoin: miter"/>
+" clip-path="url(#p633ca14d43)" style="fill: #1e3a8a; stroke: #0f172a; stroke-width: 0.6; stroke-linejoin: miter"/>
    </g>
    <g id="patch_37">
     <path d="M 638.367527 404.208 
@@ -365,7 +365,7 @@ L 670.651572 404.208
 L 670.651572 351.027415 
 L 638.367527 351.027415 
 z
-" clip-path="url(#p7dbf96852b)" style="fill: #1e3a8a; stroke: #0f172a; stroke-width: 0.6; stroke-linejoin: miter"/>
+" clip-path="url(#p633ca14d43)" style="fill: #1e3a8a; stroke: #0f172a; stroke-width: 0.6; stroke-linejoin: miter"/>
    </g>
    <g id="patch_38">
     <path d="M 846.651693 404.208 
@@ -373,18 +373,18 @@ L 878.935739 404.208
 L 878.935739 328.788261 
 L 846.651693 328.788261 
 z
-" clip-path="url(#p7dbf96852b)" style="fill: #1e3a8a; stroke: #0f172a; stroke-width: 0.6; stroke-linejoin: miter"/>
+" clip-path="url(#p633ca14d43)" style="fill: #1e3a8a; stroke: #0f172a; stroke-width: 0.6; stroke-linejoin: miter"/>
    </g>
    <g id="matplotlib.axis_1">
     <g id="xtick_1">
      <g id="line2d_1">
       <defs>
-       <path id="m737715d368" d="M 0 0 
+       <path id="mcec9b8ada7" d="M 0 0 
 L 0 3.5 
 " style="stroke: #000000; stroke-width: 0.8"/>
       </defs>
       <g>
-       <use xlink:href="#m737715d368" x="173.373126" y="404.208" style="stroke: #000000; stroke-width: 0.8"/>
+       <use xlink:href="#mcec9b8ada7" x="173.373126" y="404.208" style="stroke: #000000; stroke-width: 0.8"/>
       </g>
      </g>
      <g id="text_12">
@@ -395,7 +395,7 @@ L 0 3.5
     <g id="xtick_2">
      <g id="line2d_2">
       <g>
-       <use xlink:href="#m737715d368" x="381.657292" y="404.208" style="stroke: #000000; stroke-width: 0.8"/>
+       <use xlink:href="#mcec9b8ada7" x="381.657292" y="404.208" style="stroke: #000000; stroke-width: 0.8"/>
       </g>
      </g>
      <g id="text_13">
@@ -406,7 +406,7 @@ L 0 3.5
     <g id="xtick_3">
      <g id="line2d_3">
       <g>
-       <use xlink:href="#m737715d368" x="589.941458" y="404.208" style="stroke: #000000; stroke-width: 0.8"/>
+       <use xlink:href="#mcec9b8ada7" x="589.941458" y="404.208" style="stroke: #000000; stroke-width: 0.8"/>
       </g>
      </g>
      <g id="text_14">
@@ -417,7 +417,7 @@ L 0 3.5
     <g id="xtick_4">
      <g id="line2d_4">
       <g>
-       <use xlink:href="#m737715d368" x="798.225624" y="404.208" style="stroke: #000000; stroke-width: 0.8"/>
+       <use xlink:href="#mcec9b8ada7" x="798.225624" y="404.208" style="stroke: #000000; stroke-width: 0.8"/>
       </g>
      </g>
      <g id="text_15">
@@ -431,16 +431,16 @@ L 0 3.5
      <g id="line2d_5">
       <path d="M 53.349375 404.208 
 L 918.249375 404.208 
-" clip-path="url(#p7dbf96852b)" style="fill: none; stroke-dasharray: 2.59,1.12; stroke-dashoffset: 0; stroke: #e2e8f0; stroke-opacity: 0.6; stroke-width: 0.7"/>
+" clip-path="url(#p633ca14d43)" style="fill: none; stroke-dasharray: 2.59,1.12; stroke-dashoffset: 0; stroke: #e2e8f0; stroke-opacity: 0.6; stroke-width: 0.7"/>
      </g>
      <g id="line2d_6">
       <defs>
-       <path id="me05c8c8ca1" d="M 0 0 
+       <path id="m9433d19934" d="M 0 0 
 L -3.5 0 
 " style="stroke: #000000; stroke-width: 0.8"/>
       </defs>
       <g>
-       <use xlink:href="#me05c8c8ca1" x="53.349375" y="404.208" style="stroke: #000000; stroke-width: 0.8"/>
+       <use xlink:href="#m9433d19934" x="53.349375" y="404.208" style="stroke: #000000; stroke-width: 0.8"/>
       </g>
      </g>
      <g id="text_16">
@@ -451,11 +451,11 @@ L -3.5 0
      <g id="line2d_7">
       <path d="M 53.349375 371.977342 
 L 918.249375 371.977342 
-" clip-path="url(#p7dbf96852b)" style="fill: none; stroke-dasharray: 2.59,1.12; stroke-dashoffset: 0; stroke: #e2e8f0; stroke-opacity: 0.6; stroke-width: 0.7"/>
+" clip-path="url(#p633ca14d43)" style="fill: none; stroke-dasharray: 2.59,1.12; stroke-dashoffset: 0; stroke: #e2e8f0; stroke-opacity: 0.6; stroke-width: 0.7"/>
      </g>
      <g id="line2d_8">
       <g>
-       <use xlink:href="#me05c8c8ca1" x="53.349375" y="371.977342" style="stroke: #000000; stroke-width: 0.8"/>
+       <use xlink:href="#m9433d19934" x="53.349375" y="371.977342" style="stroke: #000000; stroke-width: 0.8"/>
       </g>
      </g>
      <g id="text_17">
@@ -466,11 +466,11 @@ L 918.249375 371.977342
      <g id="line2d_9">
       <path d="M 53.349375 339.746684 
 L 918.249375 339.746684 
-" clip-path="url(#p7dbf96852b)" style="fill: none; stroke-dasharray: 2.59,1.12; stroke-dashoffset: 0; stroke: #e2e8f0; stroke-opacity: 0.6; stroke-width: 0.7"/>
+" clip-path="url(#p633ca14d43)" style="fill: none; stroke-dasharray: 2.59,1.12; stroke-dashoffset: 0; stroke: #e2e8f0; stroke-opacity: 0.6; stroke-width: 0.7"/>
      </g>
      <g id="line2d_10">
       <g>
-       <use xlink:href="#me05c8c8ca1" x="53.349375" y="339.746684" style="stroke: #000000; stroke-width: 0.8"/>
+       <use xlink:href="#m9433d19934" x="53.349375" y="339.746684" style="stroke: #000000; stroke-width: 0.8"/>
       </g>
      </g>
      <g id="text_18">
@@ -481,11 +481,11 @@ L 918.249375 339.746684
      <g id="line2d_11">
       <path d="M 53.349375 307.516027 
 L 918.249375 307.516027 
-" clip-path="url(#p7dbf96852b)" style="fill: none; stroke-dasharray: 2.59,1.12; stroke-dashoffset: 0; stroke: #e2e8f0; stroke-opacity: 0.6; stroke-width: 0.7"/>
+" clip-path="url(#p633ca14d43)" style="fill: none; stroke-dasharray: 2.59,1.12; stroke-dashoffset: 0; stroke: #e2e8f0; stroke-opacity: 0.6; stroke-width: 0.7"/>
      </g>
      <g id="line2d_12">
       <g>
-       <use xlink:href="#me05c8c8ca1" x="53.349375" y="307.516027" style="stroke: #000000; stroke-width: 0.8"/>
+       <use xlink:href="#m9433d19934" x="53.349375" y="307.516027" style="stroke: #000000; stroke-width: 0.8"/>
       </g>
      </g>
      <g id="text_19">
@@ -496,11 +496,11 @@ L 918.249375 307.516027
      <g id="line2d_13">
       <path d="M 53.349375 275.285369 
 L 918.249375 275.285369 
-" clip-path="url(#p7dbf96852b)" style="fill: none; stroke-dasharray: 2.59,1.12; stroke-dashoffset: 0; stroke: #e2e8f0; stroke-opacity: 0.6; stroke-width: 0.7"/>
+" clip-path="url(#p633ca14d43)" style="fill: none; stroke-dasharray: 2.59,1.12; stroke-dashoffset: 0; stroke: #e2e8f0; stroke-opacity: 0.6; stroke-width: 0.7"/>
      </g>
      <g id="line2d_14">
       <g>
-       <use xlink:href="#me05c8c8ca1" x="53.349375" y="275.285369" style="stroke: #000000; stroke-width: 0.8"/>
+       <use xlink:href="#m9433d19934" x="53.349375" y="275.285369" style="stroke: #000000; stroke-width: 0.8"/>
       </g>
      </g>
      <g id="text_20">
@@ -511,11 +511,11 @@ L 918.249375 275.285369
      <g id="line2d_15">
       <path d="M 53.349375 243.054711 
 L 918.249375 243.054711 
-" clip-path="url(#p7dbf96852b)" style="fill: none; stroke-dasharray: 2.59,1.12; stroke-dashoffset: 0; stroke: #e2e8f0; stroke-opacity: 0.6; stroke-width: 0.7"/>
+" clip-path="url(#p633ca14d43)" style="fill: none; stroke-dasharray: 2.59,1.12; stroke-dashoffset: 0; stroke: #e2e8f0; stroke-opacity: 0.6; stroke-width: 0.7"/>
      </g>
      <g id="line2d_16">
       <g>
-       <use xlink:href="#me05c8c8ca1" x="53.349375" y="243.054711" style="stroke: #000000; stroke-width: 0.8"/>
+       <use xlink:href="#m9433d19934" x="53.349375" y="243.054711" style="stroke: #000000; stroke-width: 0.8"/>
       </g>
      </g>
      <g id="text_21">
@@ -607,7 +607,7 @@ L 918.249375 239.831645
     <text style="font-weight: 700; font-size: 7.6px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #1e3a8a" x="862.793716" y="325.790421" transform="rotate(-0 862.793716 325.790421)">46.8</text>
    </g>
    <g id="text_43">
-    <text style="font-weight: 700; font-size: 11.8px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #0f172a" x="485.799375" y="231.831645" transform="rotate(-0 485.799375 231.831645)">B. Exp 4 混合检索消融实测：RRF 在精确错误码路翻倍超越单路，两阶段 Rerank 守住纯语义精度</text>
+    <text style="font-weight: 700; font-size: 11.6px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #0f172a" x="485.799375" y="231.831645" transform="rotate(-0 485.799375 231.831645)">B. Exp 4 混合检索消融：RRF 提升精确错误码召回，两阶段 Rerank 守住纯语义精度</text>
    </g>
    <g id="legend_1">
     <g id="patch_43">
@@ -681,14 +681,14 @@ z
    </g>
   </g>
   <g id="text_49">
-   <text style="font-weight: 700; font-size: 14.2px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #1e3a8a" x="471.849375" y="28.052" transform="rotate(-0 471.849375 28.052)">Exp 4 实证：Single-SQL 真混合检索架构与多路融合 Recall@10 消融对比</text>
+   <text style="font-weight: 700; font-size: 14px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #1e3a8a" x="471.849375" y="27.88" transform="rotate(-0 471.849375 27.88)">Exp 4：单引擎混合检索编译路径与多路融合 Recall@10 消融对比</text>
   </g>
  </g>
  <defs>
-  <clipPath id="p7f9fd91759">
+  <clipPath id="p207e3cc718">
    <rect x="53.349375" y="56.016" width="864.9" height="135.789163"/>
   </clipPath>
-  <clipPath id="p7dbf96852b">
+  <clipPath id="p633ca14d43">
    <rect x="53.349375" y="239.831645" width="864.9" height="164.376355"/>
   </clipPath>
  </defs>

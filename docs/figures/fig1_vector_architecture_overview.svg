@@ -1,98 +1,541 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 620" width="1200" height="620" font-family="PingFang SC, Hiragino Sans GB, Arial Unicode MS, -apple-system, sans-serif">
-  <rect width="1200" height="620" fill="#FFFFFF" rx="8"/>
-  <defs>
-    <marker id="arrow-navy" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-      <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#1E3A8A"/>
-    </marker>
-    <marker id="arrow-teal" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-      <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#0D9488"/>
-    </marker>
-    <marker id="arrow-red" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-      <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#DC2626"/>
-    </marker>
-    <marker id="arrow-slate" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-      <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#475569"/>
-    </marker>
-  </defs>
-  <text x="600" y="36" font-size="20" font-weight="bold" fill="#1E3A8A" text-anchor="middle">OceanBase seekdb 向量检索与混合查询全链路技术全景图（方向二核心框架）</text>
-  <text x="600" y="58" font-size="13" font-weight="normal" fill="#475569" text-anchor="middle">从高维几何空间与数学度量，到 VSAG 量化图引擎、CBO 自适应过滤下推与双层异步 SLO 治理</text>
-  <rect x="35" y="82" width="265" height="495" fill="#EFF6FF" stroke="#2563EB" stroke-width="1.8" rx="10"/>
-  <rect x="35" y="82" width="265" height="38" fill="#2563EB" stroke="#2563EB" stroke-width="1.0" rx="8"/>
-  <text x="167.5" y="106" font-size="14" font-weight="bold" fill="#FFFFFF" text-anchor="middle">1. 表征空间与距离度量</text>
-  <rect x="47" y="136" width="241" height="94" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2" rx="6"/>
-  <text x="57" y="158" font-size="13" font-weight="bold" fill="#2563EB" text-anchor="start">Dense vs Sparse 互补</text>
-  <text x="57" y="181" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">语义泛化 vs 精确词项/错误码</text>
-  <rect x="47" y="244" width="241" height="94" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2" rx="6"/>
-  <text x="57" y="266" font-size="13" font-weight="bold" fill="#2563EB" text-anchor="start">维度灾难 (Curse of Dim)</text>
-  <text x="57" y="289" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">d→∞ 时 D_min/D_max → 1</text>
-  <text x="57" y="309" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">KD-Tree 退化为 O(N) 扫描</text>
-  <rect x="47" y="352" width="241" height="94" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2" rx="6"/>
-  <text x="57" y="374" font-size="13" font-weight="bold" fill="#2563EB" text-anchor="start">度量严格等价条件</text>
-  <text x="57" y="397" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">仅当 ||x||₂=||y||₂=1 时:</text>
-  <text x="57" y="417" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">L2 排序 ≡ IP ≡ Cosine</text>
-  <rect x="47" y="460" width="241" height="94" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2" rx="6"/>
-  <text x="57" y="482" font-size="13" font-weight="bold" fill="#2563EB" text-anchor="start">硬件访存加速</text>
-  <text x="57" y="505" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">Memory-bound 瓶颈突破:</text>
-  <text x="57" y="525" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">AVX-512 / NEON + LUT 查表</text>
-  <rect x="325" y="82" width="275" height="495" fill="#F0FDFA" stroke="#0D9488" stroke-width="1.8" rx="10"/>
-  <rect x="325" y="82" width="275" height="38" fill="#0D9488" stroke="#0D9488" stroke-width="1.0" rx="8"/>
-  <text x="462.5" y="106" font-size="14" font-weight="bold" fill="#FFFFFF" text-anchor="middle">2. ANN 索引与量化 (VSAG)</text>
-  <rect x="337" y="136" width="251" height="94" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2" rx="6"/>
-  <text x="347" y="158" font-size="13" font-weight="bold" fill="#0D9488" text-anchor="start">IVF-PQ + Refine</text>
-  <text x="347" y="181" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">Voronoi 倒排分桶 + 子空间码本</text>
-  <text x="347" y="201" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">ADC 查表粗排 → FP32 精排</text>
-  <rect x="337" y="244" width="251" height="94" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2" rx="6"/>
-  <text x="347" y="266" font-size="13" font-weight="bold" fill="#0D9488" text-anchor="start">HNSW / VSAG HGraph</text>
-  <text x="347" y="289" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">分层导航小世界 (M, ef_search)</text>
-  <text x="347" y="309" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">痛点: 内存墙 + 软删连通退化</text>
-  <rect x="337" y="352" width="251" height="94" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2" rx="6"/>
-  <text x="347" y="374" font-size="13" font-weight="bold" fill="#0D9488" text-anchor="start">DiskANN (Vamana)</text>
-  <text x="347" y="397" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">RAM 存压缩码 + SSD 存全精度</text>
-  <text x="347" y="417" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">Beam Search 隐藏磁盘随机 I/O</text>
-  <rect x="337" y="460" width="251" height="94" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2" rx="6"/>
-  <text x="347" y="482" font-size="13" font-weight="bold" fill="#0D9488" text-anchor="start">RaBitQ (SIGMOD'24/25)</text>
-  <text x="347" y="505" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">随机正交旋转 + 1/多-bit 位运算</text>
-  <text x="347" y="525" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">严格无偏误差界 + 21x 压缩</text>
-  <rect x="625" y="82" width="275" height="495" fill="#FEF3C7" stroke="#D97706" stroke-width="1.8" rx="10"/>
-  <rect x="625" y="82" width="275" height="38" fill="#D97706" stroke="#D97706" stroke-width="1.0" rx="8"/>
-  <text x="762.5" y="106" font-size="14" font-weight="bold" fill="#FFFFFF" text-anchor="middle">3. 过滤与混合查询 (CBO)</text>
-  <rect x="637" y="136" width="251" height="94" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2" rx="6"/>
-  <text x="647" y="158" font-size="13" font-weight="bold" fill="#D97706" text-anchor="start">过滤三难困境 (选择率 σ)</text>
-  <text x="647" y="181" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">Post-Filter 低 σ 召回坍塌</text>
-  <text x="647" y="201" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">In-Filter 稀疏断图 / Pre 扫全表</text>
-  <rect x="637" y="244" width="251" height="94" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2" rx="6"/>
-  <text x="647" y="266" font-size="13" font-weight="bold" fill="#D97706" text-anchor="start">顶会与 seekdb 自适应</text>
-  <text x="647" y="289" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">ACORN 2-Hop 桥接 / VBase 松弛</text>
-  <text x="647" y="309" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">seekdb ADAPTIVE SCAN (PRE-FILTER)</text>
-  <rect x="637" y="352" width="251" height="94" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2" rx="6"/>
-  <text x="647" y="374" font-size="13" font-weight="bold" fill="#D97706" text-anchor="start">Single-SQL 混合召回</text>
-  <text x="647" y="397" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">标量过滤 + FULLTEXT BM25</text>
-  <text x="647" y="417" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">+ VSAG ANN 同引擎协同</text>
-  <rect x="637" y="460" width="251" height="94" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2" rx="6"/>
-  <text x="647" y="482" font-size="13" font-weight="bold" fill="#D97706" text-anchor="start">RRF 与 AI_RERANK</text>
-  <text x="647" y="505" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">RRF(d)=Σ 1/(k+rᵢ(d)) 鲁棒融合</text>
-  <text x="647" y="525" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">Cross-Encoder 精排有限候选</text>
-  <rect x="925" y="82" width="240" height="495" fill="#F5F3FF" stroke="#7C3AED" stroke-width="1.8" rx="10"/>
-  <rect x="925" y="82" width="240" height="38" fill="#7C3AED" stroke="#7C3AED" stroke-width="1.0" rx="8"/>
-  <text x="1045.0" y="106" font-size="14" font-weight="bold" fill="#FFFFFF" text-anchor="middle">4. SLO 与双层并发治理</text>
-  <rect x="937" y="136" width="216" height="94" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2" rx="6"/>
-  <text x="947" y="158" font-size="13" font-weight="bold" fill="#7C3AED" text-anchor="start">三角制约模型</text>
-  <text x="947" y="181" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">Recall@K ↔ QPS ↔ P99</text>
-  <text x="947" y="201" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">ef_search 拐点与带宽饱和</text>
-  <rect x="937" y="244" width="216" height="94" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2" rx="6"/>
-  <text x="947" y="266" font-size="13" font-weight="bold" fill="#7C3AED" text-anchor="start">P99 尾延迟五大元凶</text>
-  <text x="947" y="289" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">写锁阻塞 / 过滤膨胀 / Cache Miss</text>
-  <text x="947" y="309" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">带宽争抢 / Compaction 抢占</text>
-  <rect x="937" y="352" width="216" height="94" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2" rx="6"/>
-  <text x="947" y="374" font-size="13" font-weight="bold" fill="#7C3AED" text-anchor="start">Delta + Snapshot 双层</text>
-  <text x="947" y="397" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">写走 Change Stream → Delta 缓冲</text>
-  <text x="947" y="417" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">读无锁查 Snapshot + Delta 合并</text>
-  <rect x="937" y="460" width="216" height="94" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2" rx="6"/>
-  <text x="947" y="482" font-size="13" font-weight="bold" fill="#7C3AED" text-anchor="start">显式一致性控制</text>
-  <text x="947" y="505" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">Delete Bitmap 毫秒级屏蔽</text>
-  <text x="947" y="525" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">DBMS_INDEX_MANAGER.REFRESH()</text>
-  <line x1="300" y1="330" x2="325" y2="330" stroke="#1E3A8A" stroke-width="2.4" marker-end="url(#arrow-navy)"/>
-  <line x1="600" y1="330" x2="625" y2="330" stroke="#1E3A8A" stroke-width="2.4" marker-end="url(#arrow-navy)"/>
-  <line x1="900" y1="330" x2="925" y2="330" stroke="#1E3A8A" stroke-width="2.4" marker-end="url(#arrow-navy)"/>
-  <text x="600" y="602" font-size="12" font-weight="bold" fill="#475569" text-anchor="middle">实证闭环: seekdb-vector-bench (Exp1–Exp5) + OceanBase seekdb-v1.4.1.0 原生引擎实测</text>
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="896.58pt" height="453.024pt" viewBox="0 0 896.58 453.024" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-11-25T12:58:47.255785</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.2, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <rect width="100%" height="100%" fill="#FFFFFF"/>
+<g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 453.024 
+L 896.58 453.024 
+L 896.58 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 38.904 408.641342 
+L 219.81225 408.641342 
+Q 227.01975 408.641342 227.01975 401.845471 
+L 227.01975 78.362013 
+Q 227.01975 71.566142 219.81225 71.566142 
+L 38.904 71.566142 
+Q 31.6965 71.566142 31.6965 78.362013 
+L 31.6965 401.845471 
+Q 31.6965 408.641342 38.904 408.641342 
+z
+" clip-path="url(#p9b1fdf028f)" style="fill: #eff6ff; stroke: #2563eb; stroke-width: 1.6; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 40.3455 102.827148 
+L 218.37075 102.827148 
+Q 224.13675 102.827148 224.13675 97.390452 
+L 224.13675 79.721187 
+Q 224.13675 74.28449 218.37075 74.28449 
+L 40.3455 74.28449 
+Q 34.5795 74.28449 34.5795 79.721187 
+L 34.5795 97.390452 
+Q 34.5795 102.827148 40.3455 102.827148 
+z
+" clip-path="url(#p9b1fdf028f)" style="fill: #2563eb; stroke: #2563eb; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 44.67 175.542968 
+L 214.04625 175.542968 
+Q 218.37075 175.542968 218.37075 171.465445 
+L 218.37075 114.380129 
+Q 218.37075 110.302606 214.04625 110.302606 
+L 44.67 110.302606 
+Q 40.3455 110.302606 40.3455 114.380129 
+L 40.3455 171.465445 
+Q 40.3455 175.542968 44.67 175.542968 
+z
+" clip-path="url(#p9b1fdf028f)" style="fill: #ffffff; stroke: #cbd5e1; stroke-width: 1.1; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 44.67 249.617961 
+L 214.04625 249.617961 
+Q 218.37075 249.617961 218.37075 245.540439 
+L 218.37075 188.455123 
+Q 218.37075 184.3776 214.04625 184.3776 
+L 44.67 184.3776 
+Q 40.3455 184.3776 40.3455 188.455123 
+L 40.3455 245.540439 
+Q 40.3455 249.617961 44.67 249.617961 
+z
+" clip-path="url(#p9b1fdf028f)" style="fill: #ffffff; stroke: #cbd5e1; stroke-width: 1.1; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 44.67 323.692955 
+L 214.04625 323.692955 
+Q 218.37075 323.692955 218.37075 319.615432 
+L 218.37075 262.530116 
+Q 218.37075 258.452594 214.04625 258.452594 
+L 44.67 258.452594 
+Q 40.3455 258.452594 40.3455 262.530116 
+L 40.3455 319.615432 
+Q 40.3455 323.692955 44.67 323.692955 
+z
+" clip-path="url(#p9b1fdf028f)" style="fill: #ffffff; stroke: #cbd5e1; stroke-width: 1.1; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_7">
+    <path d="M 44.67 397.767948 
+L 214.04625 397.767948 
+Q 218.37075 397.767948 218.37075 393.690426 
+L 218.37075 336.60511 
+Q 218.37075 332.527587 214.04625 332.527587 
+L 44.67 332.527587 
+Q 40.3455 332.527587 40.3455 336.60511 
+L 40.3455 393.690426 
+Q 40.3455 397.767948 44.67 397.767948 
+z
+" clip-path="url(#p9b1fdf028f)" style="fill: #ffffff; stroke: #cbd5e1; stroke-width: 1.1; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_8">
+    <path d="M 250.08375 408.641342 
+L 438.1995 408.641342 
+Q 445.407 408.641342 445.407 401.845471 
+L 445.407 78.362013 
+Q 445.407 71.566142 438.1995 71.566142 
+L 250.08375 71.566142 
+Q 242.87625 71.566142 242.87625 78.362013 
+L 242.87625 401.845471 
+Q 242.87625 408.641342 250.08375 408.641342 
+z
+" clip-path="url(#p9b1fdf028f)" style="fill: #f0fdfa; stroke: #0d9488; stroke-width: 1.6; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_9">
+    <path d="M 251.52525 102.827148 
+L 436.758 102.827148 
+Q 442.524 102.827148 442.524 97.390452 
+L 442.524 79.721187 
+Q 442.524 74.28449 436.758 74.28449 
+L 251.52525 74.28449 
+Q 245.75925 74.28449 245.75925 79.721187 
+L 245.75925 97.390452 
+Q 245.75925 102.827148 251.52525 102.827148 
+z
+" clip-path="url(#p9b1fdf028f)" style="fill: #0d9488; stroke: #0d9488; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_10">
+    <path d="M 255.84975 175.542968 
+L 432.4335 175.542968 
+Q 436.758 175.542968 436.758 171.465445 
+L 436.758 114.380129 
+Q 436.758 110.302606 432.4335 110.302606 
+L 255.84975 110.302606 
+Q 251.52525 110.302606 251.52525 114.380129 
+L 251.52525 171.465445 
+Q 251.52525 175.542968 255.84975 175.542968 
+z
+" clip-path="url(#p9b1fdf028f)" style="fill: #ffffff; stroke: #cbd5e1; stroke-width: 1.1; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_11">
+    <path d="M 255.84975 249.617961 
+L 432.4335 249.617961 
+Q 436.758 249.617961 436.758 245.540439 
+L 436.758 188.455123 
+Q 436.758 184.3776 432.4335 184.3776 
+L 255.84975 184.3776 
+Q 251.52525 184.3776 251.52525 188.455123 
+L 251.52525 245.540439 
+Q 251.52525 249.617961 255.84975 249.617961 
+z
+" clip-path="url(#p9b1fdf028f)" style="fill: #ffffff; stroke: #cbd5e1; stroke-width: 1.1; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_12">
+    <path d="M 255.84975 323.692955 
+L 432.4335 323.692955 
+Q 436.758 323.692955 436.758 319.615432 
+L 436.758 262.530116 
+Q 436.758 258.452594 432.4335 258.452594 
+L 255.84975 258.452594 
+Q 251.52525 258.452594 251.52525 262.530116 
+L 251.52525 319.615432 
+Q 251.52525 323.692955 255.84975 323.692955 
+z
+" clip-path="url(#p9b1fdf028f)" style="fill: #ffffff; stroke: #cbd5e1; stroke-width: 1.1; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_13">
+    <path d="M 255.84975 397.767948 
+L 432.4335 397.767948 
+Q 436.758 397.767948 436.758 393.690426 
+L 436.758 336.60511 
+Q 436.758 332.527587 432.4335 332.527587 
+L 255.84975 332.527587 
+Q 251.52525 332.527587 251.52525 336.60511 
+L 251.52525 393.690426 
+Q 251.52525 397.767948 255.84975 397.767948 
+z
+" clip-path="url(#p9b1fdf028f)" style="fill: #ffffff; stroke: #cbd5e1; stroke-width: 1.1; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_14">
+    <path d="M 467.75025 408.641342 
+L 655.866 408.641342 
+Q 663.0735 408.641342 663.0735 401.845471 
+L 663.0735 78.362013 
+Q 663.0735 71.566142 655.866 71.566142 
+L 467.75025 71.566142 
+Q 460.54275 71.566142 460.54275 78.362013 
+L 460.54275 401.845471 
+Q 460.54275 408.641342 467.75025 408.641342 
+z
+" clip-path="url(#p9b1fdf028f)" style="fill: #fef3c7; stroke: #d97706; stroke-width: 1.6; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_15">
+    <path d="M 469.19175 102.827148 
+L 654.4245 102.827148 
+Q 660.1905 102.827148 660.1905 97.390452 
+L 660.1905 79.721187 
+Q 660.1905 74.28449 654.4245 74.28449 
+L 469.19175 74.28449 
+Q 463.42575 74.28449 463.42575 79.721187 
+L 463.42575 97.390452 
+Q 463.42575 102.827148 469.19175 102.827148 
+z
+" clip-path="url(#p9b1fdf028f)" style="fill: #d97706; stroke: #d97706; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_16">
+    <path d="M 473.51625 175.542968 
+L 650.1 175.542968 
+Q 654.4245 175.542968 654.4245 171.465445 
+L 654.4245 114.380129 
+Q 654.4245 110.302606 650.1 110.302606 
+L 473.51625 110.302606 
+Q 469.19175 110.302606 469.19175 114.380129 
+L 469.19175 171.465445 
+Q 469.19175 175.542968 473.51625 175.542968 
+z
+" clip-path="url(#p9b1fdf028f)" style="fill: #ffffff; stroke: #cbd5e1; stroke-width: 1.1; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_17">
+    <path d="M 473.51625 249.617961 
+L 650.1 249.617961 
+Q 654.4245 249.617961 654.4245 245.540439 
+L 654.4245 188.455123 
+Q 654.4245 184.3776 650.1 184.3776 
+L 473.51625 184.3776 
+Q 469.19175 184.3776 469.19175 188.455123 
+L 469.19175 245.540439 
+Q 469.19175 249.617961 473.51625 249.617961 
+z
+" clip-path="url(#p9b1fdf028f)" style="fill: #ffffff; stroke: #cbd5e1; stroke-width: 1.1; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_18">
+    <path d="M 473.51625 323.692955 
+L 650.1 323.692955 
+Q 654.4245 323.692955 654.4245 319.615432 
+L 654.4245 262.530116 
+Q 654.4245 258.452594 650.1 258.452594 
+L 473.51625 258.452594 
+Q 469.19175 258.452594 469.19175 262.530116 
+L 469.19175 319.615432 
+Q 469.19175 323.692955 473.51625 323.692955 
+z
+" clip-path="url(#p9b1fdf028f)" style="fill: #ffffff; stroke: #cbd5e1; stroke-width: 1.1; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_19">
+    <path d="M 473.51625 397.767948 
+L 650.1 397.767948 
+Q 654.4245 397.767948 654.4245 393.690426 
+L 654.4245 336.60511 
+Q 654.4245 332.527587 650.1 332.527587 
+L 473.51625 332.527587 
+Q 469.19175 332.527587 469.19175 336.60511 
+L 469.19175 393.690426 
+Q 469.19175 397.767948 473.51625 397.767948 
+z
+" clip-path="url(#p9b1fdf028f)" style="fill: #ffffff; stroke: #cbd5e1; stroke-width: 1.1; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_20">
+    <path d="M 685.41675 408.641342 
+L 857.676 408.641342 
+Q 864.8835 408.641342 864.8835 401.845471 
+L 864.8835 78.362013 
+Q 864.8835 71.566142 857.676 71.566142 
+L 685.41675 71.566142 
+Q 678.20925 71.566142 678.20925 78.362013 
+L 678.20925 401.845471 
+Q 678.20925 408.641342 685.41675 408.641342 
+z
+" clip-path="url(#p9b1fdf028f)" style="fill: #f5f3ff; stroke: #7c3aed; stroke-width: 1.6; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_21">
+    <path d="M 686.85825 102.827148 
+L 856.2345 102.827148 
+Q 862.0005 102.827148 862.0005 97.390452 
+L 862.0005 79.721187 
+Q 862.0005 74.28449 856.2345 74.28449 
+L 686.85825 74.28449 
+Q 681.09225 74.28449 681.09225 79.721187 
+L 681.09225 97.390452 
+Q 681.09225 102.827148 686.85825 102.827148 
+z
+" clip-path="url(#p9b1fdf028f)" style="fill: #7c3aed; stroke: #7c3aed; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_22">
+    <path d="M 691.18275 175.542968 
+L 851.91 175.542968 
+Q 856.2345 175.542968 856.2345 171.465445 
+L 856.2345 114.380129 
+Q 856.2345 110.302606 851.91 110.302606 
+L 691.18275 110.302606 
+Q 686.85825 110.302606 686.85825 114.380129 
+L 686.85825 171.465445 
+Q 686.85825 175.542968 691.18275 175.542968 
+z
+" clip-path="url(#p9b1fdf028f)" style="fill: #ffffff; stroke: #cbd5e1; stroke-width: 1.1; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_23">
+    <path d="M 691.18275 249.617961 
+L 851.91 249.617961 
+Q 856.2345 249.617961 856.2345 245.540439 
+L 856.2345 188.455123 
+Q 856.2345 184.3776 851.91 184.3776 
+L 691.18275 184.3776 
+Q 686.85825 184.3776 686.85825 188.455123 
+L 686.85825 245.540439 
+Q 686.85825 249.617961 691.18275 249.617961 
+z
+" clip-path="url(#p9b1fdf028f)" style="fill: #ffffff; stroke: #cbd5e1; stroke-width: 1.1; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_24">
+    <path d="M 691.18275 323.692955 
+L 851.91 323.692955 
+Q 856.2345 323.692955 856.2345 319.615432 
+L 856.2345 262.530116 
+Q 856.2345 258.452594 851.91 258.452594 
+L 691.18275 258.452594 
+Q 686.85825 258.452594 686.85825 262.530116 
+L 686.85825 319.615432 
+Q 686.85825 323.692955 691.18275 323.692955 
+z
+" clip-path="url(#p9b1fdf028f)" style="fill: #ffffff; stroke: #cbd5e1; stroke-width: 1.1; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_25">
+    <path d="M 691.18275 397.767948 
+L 851.91 397.767948 
+Q 856.2345 397.767948 856.2345 393.690426 
+L 856.2345 336.60511 
+Q 856.2345 332.527587 851.91 332.527587 
+L 691.18275 332.527587 
+Q 686.85825 332.527587 686.85825 336.60511 
+L 686.85825 393.690426 
+Q 686.85825 397.767948 691.18275 397.767948 
+z
+" clip-path="url(#p9b1fdf028f)" style="fill: #ffffff; stroke: #cbd5e1; stroke-width: 1.1; stroke-linejoin: miter"/>
+   </g>
+   <g id="text_1">
+    <text style="font-weight: 700; font-size: 17.5px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #1e3a8a" x="448.29" y="41.168439" transform="rotate(-0 448.29 41.168439)">OceanBase seekdb 向量检索与混合查询技术脉络</text>
+   </g>
+   <g id="text_2">
+    <text style="font-size: 11px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #475569" x="448.29" y="58.421308" transform="rotate(-0 448.29 58.421308)">从高维几何空间与距离度量，到 VSAG 量化图引擎、CBO 自适应过滤下推与双层异步索引</text>
+   </g>
+   <g id="text_3">
+    <text style="font-weight: 700; font-size: 11.5px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #ffffff" x="129.358125" y="92.695819" transform="rotate(-0 129.358125 92.695819)">1. 表征空间与距离度量</text>
+   </g>
+   <g id="text_4">
+    <text style="font-weight: 700; font-size: 10.5px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #2563eb" x="48.27375" y="128.729187" transform="rotate(-0 48.27375 128.729187)">Dense vs Sparse 分工</text>
+   </g>
+   <g id="text_5">
+    <text style="font-size: 9.4px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #475569" x="48.27375" y="147.665961" transform="rotate(-0 48.27375 147.665961)">语义泛化 vs 精确词项/错误码</text>
+   </g>
+   <g id="text_6">
+    <text style="font-weight: 700; font-size: 10.5px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #2563eb" x="48.27375" y="203.108516" transform="rotate(-0 48.27375 203.108516)">维度灾难 (Curse of Dim)</text>
+   </g>
+   <g id="text_7">
+    <text style="font-size: 9.4px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #475569" x="48.27375" y="221.740955" transform="rotate(-0 48.27375 221.740955)">d→∞ 时 D_min/D_max → 1</text>
+   </g>
+   <g id="text_8">
+    <text style="font-size: 9.4px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #475569" x="48.27375" y="237.371458" transform="rotate(-0 48.27375 237.371458)">KD-Tree 退化为 O(N) 扫描</text>
+   </g>
+   <g id="text_9">
+    <text style="font-weight: 700; font-size: 10.5px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #2563eb" x="48.27375" y="277.18351" transform="rotate(-0 48.27375 277.18351)">度量等价条件</text>
+   </g>
+   <g id="text_10">
+    <text style="font-size: 9.4px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #475569" x="48.27375" y="295.543495" transform="rotate(-0 48.27375 295.543495)">仅当 ||x||₂=||y||₂=1 时:</text>
+   </g>
+   <g id="text_11">
+    <text style="font-size: 9.4px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #475569" x="48.27375" y="311.446452" transform="rotate(-0 48.27375 311.446452)">L2 排序 = IP = Cosine</text>
+   </g>
+   <g id="text_12">
+    <text style="font-weight: 700; font-size: 10.5px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #2563eb" x="48.27375" y="351.258503" transform="rotate(-0 48.27375 351.258503)">硬件访存加速</text>
+   </g>
+   <g id="text_13">
+    <text style="font-size: 9.4px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #475569" x="48.27375" y="369.618489" transform="rotate(-0 48.27375 369.618489)">Memory-bound 瓶颈优化:</text>
+   </g>
+   <g id="text_14">
+    <text style="font-size: 9.4px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #475569" x="48.27375" y="385.521445" transform="rotate(-0 48.27375 385.521445)">AVX-512 / NEON + LUT 查表</text>
+   </g>
+   <g id="text_15">
+    <text style="font-weight: 700; font-size: 11.5px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #ffffff" x="344.141625" y="92.695819" transform="rotate(-0 344.141625 92.695819)">2. ANN 索引与量化 (VSAG)</text>
+   </g>
+   <g id="text_16">
+    <text style="font-weight: 700; font-size: 10.5px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #0d9488" x="259.4535" y="129.033523" transform="rotate(-0 259.4535 129.033523)">IVF-PQ + Refine</text>
+   </g>
+   <g id="text_17">
+    <text style="font-size: 9.4px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #475569" x="259.4535" y="147.665961" transform="rotate(-0 259.4535 147.665961)">Voronoi 倒排分桶 + 子空间码本</text>
+   </g>
+   <g id="text_18">
+    <text style="font-size: 9.4px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #475569" x="259.4535" y="163.296465" transform="rotate(-0 259.4535 163.296465)">ADC 查表粗排 → FP32 精排</text>
+   </g>
+   <g id="text_19">
+    <text style="font-weight: 700; font-size: 10.5px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #0d9488" x="259.4535" y="202.80418" transform="rotate(-0 259.4535 202.80418)">HNSW / VSAG HGraph</text>
+   </g>
+   <g id="text_20">
+    <text style="font-size: 9.4px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #475569" x="259.4535" y="221.642549" transform="rotate(-0 259.4535 221.642549)">分层导航小世界 (M, ef_search)</text>
+   </g>
+   <g id="text_21">
+    <text style="font-size: 9.4px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #475569" x="259.4535" y="237.371458" transform="rotate(-0 259.4535 237.371458)">局限: 内存较高 + 软删连通退化</text>
+   </g>
+   <g id="text_22">
+    <text style="font-weight: 700; font-size: 10.5px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #0d9488" x="259.4535" y="277.18351" transform="rotate(-0 259.4535 277.18351)">DiskANN (Vamana)</text>
+   </g>
+   <g id="text_23">
+    <text style="font-size: 9.4px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #475569" x="259.4535" y="295.815948" transform="rotate(-0 259.4535 295.815948)">RAM 存压缩码 + SSD 存全精度</text>
+   </g>
+   <g id="text_24">
+    <text style="font-size: 9.4px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #475569" x="259.4535" y="311.446452" transform="rotate(-0 259.4535 311.446452)">Beam Search 并发读隐藏 I/O 延迟</text>
+   </g>
+   <g id="text_25">
+    <text style="font-weight: 700; font-size: 10.5px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #0d9488" x="259.4535" y="351.258503" transform="rotate(-0 259.4535 351.258503)">RaBitQ (SIGMOD'24/25)</text>
+   </g>
+   <g id="text_26">
+    <text style="font-size: 9.4px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #475569" x="259.4535" y="369.890942" transform="rotate(-0 259.4535 369.890942)">随机正交旋转 + 1/多-bit 位运算</text>
+   </g>
+   <g id="text_27">
+    <text style="font-size: 9.4px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #475569" x="259.4535" y="385.521445" transform="rotate(-0 259.4535 385.521445)">期望无偏 + 21x 压缩比</text>
+   </g>
+   <g id="text_28">
+    <text style="font-weight: 700; font-size: 11.5px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #ffffff" x="561.808125" y="92.695819" transform="rotate(-0 561.808125 92.695819)">3. 过滤与混合查询 (CBO)</text>
+   </g>
+   <g id="text_29">
+    <text style="font-weight: 700; font-size: 10.5px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #d97706" x="477.12" y="129.033523" transform="rotate(-0 477.12 129.033523)">过滤执行权衡 (选择率 σ)</text>
+   </g>
+   <g id="text_30">
+    <text style="font-size: 9.4px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #475569" x="477.12" y="147.665961" transform="rotate(-0 477.12 147.665961)">Post-Filter 低 σ 召回坍塌</text>
+   </g>
+   <g id="text_31">
+    <text style="font-size: 9.4px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #475569" x="477.12" y="163.296465" transform="rotate(-0 477.12 163.296465)">In-Filter 稀疏断图 / Pre 扫子集</text>
+   </g>
+   <g id="text_32">
+    <text style="font-weight: 700; font-size: 10.5px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #d97706" x="477.12" y="203.108516" transform="rotate(-0 477.12 203.108516)">前沿策略与 seekdb</text>
+   </g>
+   <g id="text_33">
+    <text style="font-size: 9.4px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #475569" x="477.12" y="221.468502" transform="rotate(-0 477.12 221.468502)">ACORN 2-Hop 桥接 / VBase 迭代</text>
+   </g>
+   <g id="text_34">
+    <text style="font-size: 9.4px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #475569" x="477.12" y="237.371458" transform="rotate(-0 477.12 237.371458)">seekdb ADAPTIVE SCAN (PRE-FILTER)</text>
+   </g>
+   <g id="text_35">
+    <text style="font-weight: 700; font-size: 10.5px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #d97706" x="477.12" y="276.805346" transform="rotate(-0 477.12 276.805346)">Single-SQL 混合召回</text>
+   </g>
+   <g id="text_36">
+    <text style="font-size: 9.4px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #475569" x="477.12" y="295.815948" transform="rotate(-0 477.12 295.815948)">标量过滤 + FULLTEXT BM25</text>
+   </g>
+   <g id="text_37">
+    <text style="font-size: 9.4px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #475569" x="477.12" y="311.446452" transform="rotate(-0 477.12 311.446452)">+ VSAG ANN 同快照执行</text>
+   </g>
+   <g id="text_38">
+    <text style="font-weight: 700; font-size: 10.5px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #d97706" x="477.12" y="351.258503" transform="rotate(-0 477.12 351.258503)">RRF 与 AI_RERANK</text>
+   </g>
+   <g id="text_39">
+    <text style="font-size: 9.4px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #475569" x="477.12" y="369.890942" transform="rotate(-0 477.12 369.890942)">RRF(d)=Σ 1/(k+r_i(d)) 融合排名</text>
+   </g>
+   <g id="text_40">
+    <text style="font-size: 9.4px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #475569" x="477.12" y="385.521445" transform="rotate(-0 477.12 385.521445)">Cross-Encoder 精排有限候选</text>
+   </g>
+   <g id="text_41">
+    <text style="font-weight: 700; font-size: 11.5px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #ffffff" x="771.546375" y="92.695819" transform="rotate(-0 771.546375 92.695819)">4. SLO 与并发维护</text>
+   </g>
+   <g id="text_42">
+    <text style="font-weight: 700; font-size: 10.5px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #7c3aed" x="694.7865" y="129.033523" transform="rotate(-0 694.7865 129.033523)">指标制约关系</text>
+   </g>
+   <g id="text_43">
+    <text style="font-size: 9.4px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #475569" x="694.7865" y="147.665961" transform="rotate(-0 694.7865 147.665961)">Recall@K / QPS / P99</text>
+   </g>
+   <g id="text_44">
+    <text style="font-size: 9.4px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #475569" x="694.7865" y="163.296465" transform="rotate(-0 694.7865 163.296465)">ef_search 拐点与带宽上限</text>
+   </g>
+   <g id="text_45">
+    <text style="font-weight: 700; font-size: 10.5px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #7c3aed" x="694.7865" y="203.108516" transform="rotate(-0 694.7865 203.108516)">P99 尾延迟常见诱因</text>
+   </g>
+   <g id="text_46">
+    <text style="font-size: 9.4px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #475569" x="694.7865" y="221.740955" transform="rotate(-0 694.7865 221.740955)">写锁阻塞 / 过滤膨胀 / Cache Miss</text>
+   </g>
+   <g id="text_47">
+    <text style="font-size: 9.4px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #475569" x="694.7865" y="237.099005" transform="rotate(-0 694.7865 237.099005)">带宽争抢 / 后台 Compaction 抢占</text>
+   </g>
+   <g id="text_48">
+    <text style="font-weight: 700; font-size: 10.5px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #7c3aed" x="694.7865" y="276.879174" transform="rotate(-0 694.7865 276.879174)">Delta + Snapshot 双层</text>
+   </g>
+   <g id="text_49">
+    <text style="font-size: 9.4px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #475569" x="694.7865" y="295.477402" transform="rotate(-0 694.7865 295.477402)">写走 Change Stream → Delta 表</text>
+   </g>
+   <g id="text_50">
+    <text style="font-size: 9.4px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #475569" x="694.7865" y="311.173998" transform="rotate(-0 694.7865 311.173998)">读无锁查 Snapshot + Delta 合并</text>
+   </g>
+   <g id="text_51">
+    <text style="font-weight: 700; font-size: 10.5px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #7c3aed" x="694.7865" y="351.258503" transform="rotate(-0 694.7865 351.258503)">显式一致性接口</text>
+   </g>
+   <g id="text_52">
+    <text style="font-size: 9.4px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #475569" x="694.7865" y="369.618489" transform="rotate(-0 694.7865 369.618489)">Delete Bitmap 屏蔽已删行</text>
+   </g>
+   <g id="text_53">
+    <text style="font-size: 9.4px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #475569" x="694.7865" y="385.521445" transform="rotate(-0 694.7865 385.521445)">DBMS_INDEX_MANAGER.REFRESH()</text>
+   </g>
+   <g id="patch_26">
+    <path d="M 229.023104 240.103742 
+Q 235.308453 240.103742 239.134126 240.103742 
+" style="fill: none; stroke: #1e3a8a; stroke-width: 2.2; stroke-linecap: round"/>
+    <path d="M 235.134126 238.103742 
+L 239.134126 240.103742 
+L 235.134126 242.103742 
+" style="fill: none; stroke: #1e3a8a; stroke-width: 2.2; stroke-linecap: round"/>
+   </g>
+   <g id="patch_27">
+    <path d="M 447.410354 240.103742 
+Q 453.695703 240.103742 457.521376 240.103742 
+" style="fill: none; stroke: #1e3a8a; stroke-width: 2.2; stroke-linecap: round"/>
+    <path d="M 453.521376 238.103742 
+L 457.521376 240.103742 
+L 453.521376 242.103742 
+" style="fill: none; stroke: #1e3a8a; stroke-width: 2.2; stroke-linecap: round"/>
+   </g>
+   <g id="patch_28">
+    <path d="M 665.076854 240.103742 
+Q 671.362203 240.103742 675.187876 240.103742 
+" style="fill: none; stroke: #1e3a8a; stroke-width: 2.2; stroke-linecap: round"/>
+    <path d="M 671.187876 238.103742 
+L 675.187876 240.103742 
+L 671.187876 242.103742 
+" style="fill: none; stroke: #1e3a8a; stroke-width: 2.2; stroke-linecap: round"/>
+   </g>
+   <g id="text_54">
+    <text style="font-weight: 700; font-size: 10.2px; font-family: 'PingFang SC', 'Hiragino Sans GB', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #475569" x="448.29" y="430.366553" transform="rotate(-0 448.29 430.366553)">配套实验：seekdb-vector-bench (Exp 1–Exp 5) 与 OceanBase seekdb-v1.4.1.0 实测</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p9b1fdf028f">
+   <rect x="15.84" y="15.84" width="864.9" height="421.344"/>
+  </clipPath>
+ </defs>
 </svg>
